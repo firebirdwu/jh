@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <title>{% block title %} {% endblock title %}</title>
+    <link rel='icon' href="{{ url_for('static',filename='favicon.ico')}}">
+    <link rel='stylesheet' href="{{ url_for('static',filename='bootstrap-3.3.7/css/bootstrap.min.css')}}"
+        type="text/css">
+    
+    {% block style %}
+
+    {% endblock style %}
+    {% endblock head %}
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Project name</a>
+                
+            </div>
+            <div id="navbar" class=" nav navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class=" active"><a href="#">主页</a></li>
+                    <li><a href='#'>稽核系统介绍</a></li>
+                    <li><a href='#'>稽核开发文档</a></li>
+                    <li><a href='#'>报送查询</a></li>
+                </ul>
+                <ul class=" nav navbar-nav navbar-right">
+                    <li><a href="{{ url_for('auth.login')}}"><span class=" glyphicon glyphicon-log-in">登录</span></a></li>
+                    <li><a href="{{ url_for('auth.regist')}}"><span class=" glyphicon glyphicon-pencil">注册</span></a></li>
+                </ul>
+            </div>
+            
+        </div>
+    </nav>
+    <main class="container">
+        {% for message in get_flashed_messages(with_categories=True) %}
+        <div class=" alert alert-{{ message[0] }}" role="alert">
+            <button type="button" class=" close" data-dismiss="alert">&times;</button>
+            {{message[1]}}
+        </div>
+        {% endfor %}
+        {% block content %} {% endblock content %}
+        {% block footer%}
+
+        {% endblock footer %}
+    </main>
+    {% block scripts %}
+    <script src="{{ url_for('static',filename='jquery/jquery1.12.4.min.js')}}"></script>
+    <script src="../static/js/popper.min.js"></script>
+    <script src="{{ url_for('static',filename='bootstrap-3.3.7/js/bootstrap.min.js') }}"></script>
+    {% endblock scripts %}
+</body>
+
+</html>
