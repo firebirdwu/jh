@@ -12,7 +12,8 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('task.index'))
+        #return redirect(url_for('task.index'))
+        return redirect(url_for('task.new_task'))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -26,8 +27,8 @@ def login():
             if username == user.username and user.validate_password(password):
                 login_user(user,remember=remember)
                 flash('欢迎回来.','info')
-                return redirect_back()
-                
+                #return redirect_back()
+                return redirect(url_for('task.new_task'))
             flash("无效的用户名或密码.","warning")
         else:
             flash("无此账号!!","warning")
