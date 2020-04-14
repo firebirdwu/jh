@@ -4,7 +4,9 @@ from jh.forms import TaskForm
 from flask_login import login_required,current_user
 from jh.models import Tasks
 from jh.extensions import db
-from jh.models import TaskGroup,TaskType
+from jh.models import TaskGroup,TaskType,Users
+
+
 task_bp = Blueprint('task', __name__)
 
 
@@ -19,7 +21,9 @@ def new_task():
         tasktype2=new_form.taskType2.data
         taskname = new_form.taskName.data   
         taskcontent=new_form.taskContent.data
-        task= Tasks(groupName=groupname,taskType1=tasktype1,taskType2=tasktype2,taskName=taskname,taskContent=taskcontent)
+        taskdate = new_form.date.data.strftime('%Y-%m-%d')
+        username=Users.query.filter_by(id=current_user.id).first().username
+        task= Tasks(username=username,taskDate=taskdate,groupName=groupname,taskType1=tasktype1,taskType2=tasktype2,taskName=taskname,taskContent=taskcontent)
         db.session.add(task)
         db.session.commit()
         flash('恭喜,数据提交成功', 'success')

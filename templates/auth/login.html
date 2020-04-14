@@ -45,7 +45,7 @@
 </style>
 {% endblock %}
 {% block content %}
-<form class=" form-signin" method="post">
+<form class=" form-signin" method="post" action="{{url_for('auth.login')}}">
     <h2 class="form-signin-heading">登录</h2>
     {{ form.csrf_token }}
     {{ form.username.label(class_='sr-only') }}

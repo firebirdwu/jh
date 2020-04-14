@@ -11,9 +11,9 @@
     <link rel='stylesheet' href="{{ url_for('static',filename='bootstrap-3.3.7/css/bootstrap.min.css')}}"
         type="text/css">
     
-    {% block style %}
+    {% block style %}{% endblock style %}
+    {% block headscript %}{% endblock headscript %}
 
-    {% endblock style %}
     {% endblock head %}
 </head>
 
@@ -39,8 +39,14 @@
                     <li><a href='#'>报送查询</a></li>
                 </ul>
                 <ul class=" nav navbar-nav navbar-right">
-                    <li><a href="{{ url_for('auth.login')}}"><span class=" glyphicon glyphicon-log-in">登录</span></a></li>
-                    <li><a href="{{ url_for('auth.regist')}}"><span class=" glyphicon glyphicon-pencil">注册</span></a></li>
+                    {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('auth.logout')}}"><span class=" glyphicon glyphicon-log-out">登出</span></a></li>
+                    <li><a href="#">欢迎回来:{{user.username}}</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('auth.login')}}"><span class=" glyphicon glyphicon-log-in">登录</span></a></li>
+                        <li><a href="{{ url_for('auth.regist')}}"><span class=" glyphicon glyphicon-pencil">注册</span></a></li>
+                    {% endif %}
+                    
                 </ul>
             </div>
             

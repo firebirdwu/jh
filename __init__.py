@@ -7,6 +7,8 @@ from jh.blueprints.task import task_bp
 from jh.extensions import mail, db, bootstrap, moment, ckeditor,csrf,login_manager
 from flask import render_template
 from jh.DBUtils import DbUtil
+from jh.models import Users
+from flask_login import current_user
 import click
 import os
 
@@ -20,6 +22,7 @@ def create_app(config_name=None):
     register_blueprints(app)
     register_extensions(app)
     register_commands(app)
+    register_template_context(app)
     return app
 
 
@@ -76,3 +79,11 @@ def register_commands(app):
             click.echo('插入失败')
     """
     
+def register_template_context(app):
+    @app.context_processor
+    def make_template_context():
+        if current_user.is_authenticated:
+            user=Users.query.filter_by(id=current_user.id).first()
+        else:
+            user=None
+        return dict(user=user)

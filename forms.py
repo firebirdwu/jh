@@ -1,9 +1,9 @@
 from flask_ckeditor import CKEditorField
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, ValidationError, HiddenField,\
-    BooleanField, PasswordField,DateField
+    BooleanField, PasswordField
 from wtforms.validators import DataRequired, Email, Length, Optional, URL
-
+from wtforms.fields.html5 import DateField
 from jh.models import TaskGroup,TaskType
 
 class LoginForm(FlaskForm):
@@ -24,7 +24,7 @@ class RegistForm(FlaskForm):
 
 
 class TaskForm(FlaskForm):
-    taskDate=DateField('日期',validators=[DataRequired])
+    date=DateField("日期",validators=[DataRequired()])
     groupname = SelectField('归属组', coerce=str, default=1)
     taskType1 = SelectField('任务类型1', coerce=str, default=1)
     taskType2 = SelectField('任务类型2', coerce=str, default=1)

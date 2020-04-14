@@ -33,7 +33,6 @@ def login():
         else:
             flash("无此账号!!","warning")
         
-        flash("无此账号!!","warning")
     return render_template('auth/login.html',form=form)
 
 @auth_bp.route('/regist',methods=['POST','GET'])
@@ -66,8 +65,7 @@ def regist():
 
 
 @auth_bp.route('/logout')
-@login_required
 def logout():
     logout_user()
-    flash("登出成功.","info")
-    return redirect_back()
+    flash("欢迎下次再来.","info")
+    return redirect_back(url_for('auth.login'))
