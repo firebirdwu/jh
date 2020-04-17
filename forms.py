@@ -30,7 +30,7 @@ class TaskForm(FlaskForm):
     taskType2 = SelectField('任务类型2', coerce=str, default=1)
     taskName = TextAreaField('任务名称', validators=[DataRequired()])
     taskContent = TextAreaField('任务详情', validators=[DataRequired()])
-    submit = SubmitField()
+    submit = SubmitField('提交')
 
     def __init__(self, *args, **kwargs):
         super(TaskForm,self).__init__(*args,**kwargs)
