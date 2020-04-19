@@ -28,7 +28,7 @@ def login():
                 login_user(user,remember=remember)
                 flash('欢迎回来.','info')
                 #return redirect_back()
-                return redirect(url_for('task.new_task'))
+                return redirect(url_for('task.task_list'))
             flash("无效的用户名或密码.","warning")
         else:
             flash("无此账号!!","warning")
@@ -67,5 +67,4 @@ def regist():
 @auth_bp.route('/logout')
 def logout():
     logout_user()
-    flash("欢迎下次再来.","info")
-    return redirect_back(url_for('auth.login'))
+    return redirect(url_for('task.index'))

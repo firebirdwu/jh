@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-from flask import Blueprint, flash, render_template
+from flask import Blueprint, flash, render_template,redirect,url_for
 from jh.forms import TaskForm
 from flask_login import login_required,current_user
 from jh.models import Tasks
@@ -9,6 +9,16 @@ from jh.models import TaskGroup,TaskType,Users
 
 task_bp = Blueprint('task', __name__)
 
+@task_bp.route('/')
+def index():
+    return render_template('task/index.html')
+
+@task_bp.route('/tasklist')
+@login_required
+def task_list():
+    username=Users.query.filter_by(id=current_user.id).first().username
+    tasks=Tasks.query.filter_by(username=username).order_by(Tasks.taskInputTime.desc()).all()
+    return render_template('task/tasklist.html',tasks=tasks)
 
 
 @task_bp.route('/new_task', methods=['POST', 'GET'])
@@ -27,4 +37,32 @@ def new_task():
         db.session.add(task)
         db.session.commit()
         flash('成功+1 ', 'success')
+        return redirect(url_for('task.task_list'))
     return render_template('task/new_task.html', form=new_form)
+
+
+
+@task_bp.route('/edit_task/<int:task_id>', methods=['POST', 'GET'])
+@login_required
+def edit_task(task_id):
+    task=Tasks.query.get(task_id)
+    edit_form = TaskForm()
+    if edit_form.validate_on_submit():
+        task.groupName=edit_form.groupname.data
+        task.taskType1=edit_form.taskType1.data
+        task.taskType2=edit_form.taskType2.data
+        task.taskName = edit_form.taskName.data   
+        task.taskContent=edit_form.taskContent.data
+        task.taskDate = edit_form.date.data
+        db.session.commit()          
+        flash('修改成功 ', 'success')           
+        return redirect(url_for('task.task_list'))
+    edit_form.groupname.data=task.groupName
+    edit_form.taskType1.data=task.taskType1
+    edit_form.taskType2.data=task.taskType2
+    edit_form.taskName.data = task.taskName
+    edit_form.taskContent.data = task.taskContent
+    edit_form.date.data = task.taskDate 
+        #edit_form.username.data = task.username
+    
+    return render_template('task/edit_task.html', form=edit_form,task_id=task_id)

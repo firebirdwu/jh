@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class=" container">
+    <div class=" col-md-8 col-md-offset-2">
+        <div class="row">
+            <div class=" col-md-4">
+                <label class=" control-label">任务总数:{{tasks|length}}</label>
+            </div>
+        </div>
+        {% for task in tasks %}
+        <div class=" panel panel-default">
+            <!-- <p>{{task.taskContent}}</p> -->
+            <div class="panel-heading">
+                <div class=" row">
+                    <div class="col-sm-10">
+                        作者:{{task.username}} |事项时间:{{task.taskDate}} |类型1:{{task.taskType1}} |类型2:{{task.taskType2}}
+                    </div>
+                    <div class="input-group-btn" style="text-align: right;">
+                        <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">操作 <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{url_for('task.edit_task',task_id=task.id)}}">修改</a></li>
+                            <li><a href="{{url_for('task.new_task')}}">新增</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="panel panel-body">
+                <p>{{task.taskContent}}</p>
+                <div style="text-align:right">
+                    创建时间:{{task.taskInputTime.strftime('%Y-%m-%d %H:%M:%S')}}
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -5,6 +5,7 @@ from wtforms import StringField, SubmitField, SelectField, TextAreaField, Valida
 from wtforms.validators import DataRequired, Email, Length, Optional, URL
 from wtforms.fields.html5 import DateField
 from jh.models import TaskGroup,TaskType
+from datetime import datetime
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[
@@ -24,7 +25,7 @@ class RegistForm(FlaskForm):
 
 
 class TaskForm(FlaskForm):
-    date=StringField("日期",validators=[DataRequired()])
+    date=StringField("日期",validators=[DataRequired()],default=datetime.now().strftime('%Y-%m-%d'))
     groupname = SelectField('归属组', coerce=str, default=1)
     taskType1 = SelectField('任务类型1', coerce=str, default=1)
     taskType2 = SelectField('任务类型2', coerce=str, default=1)

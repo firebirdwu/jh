@@ -34,7 +34,7 @@ class Tasks(db.Model):
     taskContent = db.Column(db.String(300))
     taskDate = db.Column(db.String(10))
     taskInputTime = db.Column(db.DateTime, default=datetime.utcnow)
-    groupName = db.Column(db.Integer)
+    groupName = db.Column(db.String(30))
 
 class TaskGroup(db.Model):
     __tablename__ = "taskgroup"
