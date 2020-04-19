@@ -2,21 +2,15 @@
 {% from 'bootstrap/form.html' import render_form  %}
 {% block title %}新条目{% endblock %}
 {% block style %}
-<link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/css/bootstrap-datepicker.standalone.min.css"
-    rel="stylesheet">
+{{ super() }}
+<link rel='stylesheet' href="{{ url_for('static',filename='bootstrap-datepicker/css/bootstrap-datepicker3.min.css')}}"
+    type="text/css">
 {% endblock %}
 {% block headscript %}
 {{ super() }}
-<script type="text/javascript">
+<script src="{{url_for('static',filename='bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
+<script src="{{url_for('static',filename='bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js')}}"></script>
 
-    $('#date').datepicker({
-        weekStart: 1,
-        autoclose: true,
-        daysOfWeekHighlighted: "0,6",
-        format: "yyyy-mm-dd",
-        language: "zh-CN"
-    });
-</script>
 {% endblock %}
 {% block content %}
 <div class=" col-md-8 col-md-offset-2">
@@ -26,43 +20,52 @@
     <form class='form-horizontal' method="POST" action="{{url_for('task.new_task')}}">
         {{ form.csrf_token }}
         <div class='form-group'>
-            {{ form.date.label(class_='control-label col-sm-3')}}
-            <div class="col-sm-5">
-                {{ form.date(class_='form-control')}}
+            {{ form.date.label(class_='control-label col-sm-3') }}
+            <div id="taskdate" class="input-group date col-sm-4">
+                {{form.date(class_='form-control',readonly='true')}}
+                <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-th"></span>
+                </div>
             </div>
+
         </div>
         <div class='form-group'>
             {{ form.groupname.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5">
+            <div class="col-sm-5 input-group">
                 {{ form.groupname(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.taskType1.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5">
+            <div class="col-sm-5 input-group">
                 {{ form.taskType1(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.taskType2.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5">
+            <div class="col-sm-5 input-group">
                 {{ form.taskType2(class_='form-control') }}
             </div>
         </div>
         <div class="form-group">
-        {{ form.taskName(class_='form-control',placeholder='任务名称',rows='3') }}
-        {{ form.taskContent(class_='form-control',placeholder='任务详情',rows='5') }}
+            {{ form.taskName(class_='form-control',placeholder='任务名称',rows='3') }}
+            {{ form.taskContent(class_='form-control',placeholder='任务详情',rows='5') }}
         </div>
         <div class="col-sm-2 col-sm-offset-5">
-         {{ form.submit(class_="btn btn-lg btn-primary")}}
+            {{ form.submit(class_="btn btn-lg btn-primary")}}
         </div>
     </form>
 </div>
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/js/bootstrap-datepicker.min.js"></script>
-<script
-    src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.0/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script type="text/javascript">
+    $('#taskdate').datepicker({
+        format: 'yyyy-mm-dd',
+        language: 'zh-CN',
+        clearBtn: true,
+        endDate: "0d",
+        title: "任务时间",
+        todayHighlight: true,
+        keyboardNavigation:false,
+        autoclose:true
+    });
+</script>
 {% endblock %}

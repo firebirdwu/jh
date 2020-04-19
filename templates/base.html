@@ -10,10 +10,26 @@
     <link rel='icon' href="{{ url_for('static',filename='favicon.ico')}}">
     <link rel='stylesheet' href="{{ url_for('static',filename='bootstrap-3.3.7/css/bootstrap.min.css')}}"
         type="text/css">
-    
-    {% block style %}{% endblock style %}
-    {% block headscript %}{% endblock headscript %}
 
+    {% block style %}
+    <style type='text/css'>
+        .msgbtn {
+
+            -webkit-border-radius: 20px;
+
+            -moz-border-radius: 20px;
+            background-color: black;
+            border-radius: 10px;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 0 4px 0px black;
+        }
+    </style>
+    {% endblock style %}
+    {% block headscript %}
+    <script src="{{ url_for('static',filename='jquery/jquery1.12.4.min.js')}}"></script>
+    {% endblock headscript %}
     {% endblock head %}
 </head>
 
@@ -29,7 +45,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#">Project name</a>
-                
+
             </div>
             <div id="navbar" class=" nav navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -40,33 +56,34 @@
                 </ul>
                 <ul class=" nav navbar-nav navbar-right">
                     {% if current_user.is_authenticated %}
-                    <li><a href="{{ url_for('auth.logout')}}"><span class=" glyphicon glyphicon-log-out">登出</span></a></li>
+                    <li><a href="{{ url_for('auth.logout')}}"><span class=" glyphicon glyphicon-log-out">登出</span></a>
+                    </li>
                     <li><a href="#">欢迎回来:{{user.username}}</a></li>
                     {% else %}
-                        <li><a href="{{ url_for('auth.login')}}"><span class=" glyphicon glyphicon-log-in">登录</span></a></li>
-                        <li><a href="{{ url_for('auth.regist')}}"><span class=" glyphicon glyphicon-pencil">注册</span></a></li>
+                    <li><a href="{{ url_for('auth.login')}}"><span class=" glyphicon glyphicon-log-in">登录</span></a>
+                    </li>
+                    <li><a href="{{ url_for('auth.regist')}}"><span class=" glyphicon glyphicon-pencil">注册</span></a>
+                    </li>
                     {% endif %}
-                    
+
                 </ul>
             </div>
-            
+
         </div>
     </nav>
     <main class="container">
         {% for message in get_flashed_messages(with_categories=True) %}
-        <div class=" alert alert-{{ message[0] }}" role="alert">
-            <button type="button" class=" close" data-dismiss="alert">&times;</button>
-            {{message[1]}}
-        </div>
+        <label class="msgbtn" data-dismiss="alert">{{message[1]}}</label>
         {% endfor %}
         {% block content %} {% endblock content %}
         {% block footer%}
-
         {% endblock footer %}
+        <script>
+            $(".msgbtn").fadeOut(3000)
+        </script>
     </main>
     {% block scripts %}
-    <script src="{{ url_for('static',filename='jquery/jquery1.12.4.min.js')}}"></script>
-    <script src="../static/js/popper.min.js"></script>
+
     <script src="{{ url_for('static',filename='bootstrap-3.3.7/js/bootstrap.min.js') }}"></script>
     {% endblock scripts %}
 </body>

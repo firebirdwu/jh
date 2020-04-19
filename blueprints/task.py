@@ -21,10 +21,10 @@ def new_task():
         tasktype2=new_form.taskType2.data
         taskname = new_form.taskName.data   
         taskcontent=new_form.taskContent.data
-        taskdate = new_form.date.data.strftime('%Y-%m-%d')
+        taskdate = new_form.date.data
         username=Users.query.filter_by(id=current_user.id).first().username
         task= Tasks(username=username,taskDate=taskdate,groupName=groupname,taskType1=tasktype1,taskType2=tasktype2,taskName=taskname,taskContent=taskcontent)
         db.session.add(task)
         db.session.commit()
-        flash('恭喜,数据提交成功', 'success')
+        flash('成功+1 ', 'success')
     return render_template('task/new_task.html', form=new_form)

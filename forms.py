@@ -24,7 +24,7 @@ class RegistForm(FlaskForm):
 
 
 class TaskForm(FlaskForm):
-    date=DateField("日期",validators=[DataRequired()])
+    date=StringField("日期",validators=[DataRequired()])
     groupname = SelectField('归属组', coerce=str, default=1)
     taskType1 = SelectField('任务类型1', coerce=str, default=1)
     taskType2 = SelectField('任务类型2', coerce=str, default=1)
