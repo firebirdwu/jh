@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,redirect,url_for
 from flask_sqlalchemy import SQLAlchemy
 from jh.settings import config
 from jh.blueprints.admin import admin_bp
@@ -45,7 +45,9 @@ def register_blueprints(app):
     app.register_blueprint(task_bp,url_prefix='/task')
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(admin_bp, url_prefix='/admin')
-
+    @app.route('/')
+    def index():
+        return render_template('index.html')
 
 def register_shell_context(app):
     @app.shell_context_processor

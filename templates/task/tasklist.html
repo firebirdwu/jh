@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
 {% block content %}
 <div class=" container">
+    {% if tasks %}
+    <div class="page-footer" style="text-align: center;">{{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}</div>
+    {% endif %}
     <div class=" col-md-8 col-md-offset-2">
         <div class="row">
             <div class=" col-md-4">
-                <label class=" control-label">任务总数:{{tasks|length}}</label>
+                <label class=" control-label">任务总数:<span class=" badge">{{pagination.total}}</span></label>
             </div>
         </div>
         {% for task in tasks %}
@@ -35,6 +39,10 @@
 
         </div>
         {% endfor %}
+        {% if tasks %}
+        <div class="page-footer" style="text-align: center;">{{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}</div>
+        {% endif %}
     </div>
 </div>
+
 {% endblock %}

@@ -24,3 +24,4 @@ def load_user(user_id):
 
 login_manager.login_view='auth.login'
 login_manager.login_message_categoriy='warning'
+login_manager.login_message='请先登录'
