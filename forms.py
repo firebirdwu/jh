@@ -1,7 +1,7 @@
 from flask_ckeditor import CKEditorField
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, ValidationError, HiddenField,\
-    BooleanField, PasswordField
+    BooleanField, PasswordField,RadioField
 from wtforms.validators import DataRequired, Email, Length, Optional, URL
 from wtforms.fields.html5 import DateField
 from jh.models import TaskGroup,TaskType
@@ -38,3 +38,16 @@ class TaskForm(FlaskForm):
         self.groupname.choices = [(group.groupname,group.groupname) for group in TaskGroup.query.order_by(TaskGroup.id).all()]
         self.taskType1.choices = [(task.name,task.name) for task in TaskType.query.filter_by(tasklevel=1).order_by(TaskType.id).all()]
         self.taskType2.choices = [(task.name,task.name) for task in TaskType.query.filter_by(tasklevel=2).order_by(TaskType.id).all()]
+    
+class SearchForm(FlaskForm):
+    dateStart=StringField("开始日期:",validators=[DataRequired()])
+    dateEnd=StringField("结束日期:",validators=[DataRequired()])
+    submit = SubmitField('查询')
+    
+class TodoForm(FlaskForm):
+    tlevel = RadioField('级别:',coerce=str,choices=[('一般','一般'),('重要','重要'),('紧急','紧急')],default=1)
+    tstatus = RadioField('状态:',coerce=str,choices=[('未完成','未完成'),('完成','完成')],default=1)
+    tcompletion = SelectField('完成度:', coerce=str, default='50%',choices=[('0%','0%'),('50%','50%'),('80%','80%'),('100%','100%')])
+    tcontent = TextAreaField('任务名称', validators=[DataRequired()])
+    submit = SubmitField('确认')
+

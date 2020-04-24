@@ -40,3 +40,12 @@ class TaskGroup(db.Model):
     __tablename__ = "taskgroup"
     id = db.Column(db.Integer, primary_key=True)
     groupname = db.Column(db.String(30))
+
+class Todo(db.Model):
+    __tablename__="todo"
+    id=db.Column(db.Integer,primary_key=True)
+    tcontent=db.Column(db.String(300))
+    tlevel = db.Column(db.String(10))
+    tstatus= db.Column(db.String(10),default='未完成')
+    username=db.Column(db.String(30))
+    tcompletion=db.Column(db.String(5))

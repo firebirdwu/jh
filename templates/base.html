@@ -43,12 +43,12 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#">任务处理</a>
-
             </div>
             <div id="navbar" class=" nav navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li class=" active"><a href="{{url_for('index')}}">主页</a></li>
                     <li><a href='{{url_for('task.new_task')}}'>事项清单新增</a></li>
+                    <li><a href='{{url_for('task.new_todo')}}'>待办事项</a></li>
                 </ul>
                 <ul class=" nav navbar-nav navbar-right">
                     {% if current_user.is_authenticated %}

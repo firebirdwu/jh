@@ -43,67 +43,50 @@
 {% endblock%}
 {% block content %}
 <div class=" container">
-    {% if tasks %}
+    {% if todoes %}
     <div class="page-footer" style="text-align: center;">
         {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}</div>
     {% endif %}
     <div class=" col-md-8 col-md-offset-2">
         <div class="row">
             <div class="col-md-3">
-                <label class=" control-label">事项清单总数:<span class=" badge">{{pagination.total}}</span></label>
+                <label class=" control-label">待办总数:<span class=" badge">{{pagination.total}}</span></label>
             </div>
-            <form class="form-inline" method="POST" action="{{url_for('task.task_list')}}" >               
-                {{ searchform.csrf_token }}
-                <div id='datestart' class="input-group date " style="padding-right: 10px;">
-                    {{searchform.dateStart(placeholder='开始日期')}}
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-th"></span>
-                    </div>
-                </div>
-                <div id='dateend' class="input-group date " style="padding-right: 20px;">
-                    {{searchform.dateEnd(placeholder='结束日期')}}
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-th"></span>
-                    </div>
-                </div>
-                {{ searchform.submit(class_='btn btn-default')}}
-            </form>
-
         </div>
         <hr>
-        {% for task in tasks %}
+        {% for todo in todoes %}
         <div class=" panel panel-default" style="border-radius: 20px;">
-            <!-- <p>{{task.taskContent}}</p> -->
-            <div class="panel-heading a_top">
+             <div class="panel-heading a_top">
                 <div class=" row">
                     <div class="col-sm-10">
-                        作者:{{task.username}} |事项时间:{{task.taskDate}} |分组:{{task.groupName}}|类型1:{{task.taskType1}}
-                        |类型2:{{task.taskType2}}
+                        <div>
+                        作者:{{todo.username}} | 状态:{{ todo.tstatus}} | 级别:{{ todo.tlevel}}
+                    </div>
+                    <div>
+                        进度：{{todo.tcompletion}}
+                    </div>
                     </div>
                     <div class="input-group-btn">
                         <button type="button" style="border-radius: 20px;"
                             class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">操作 <span class="caret"></span></button>
+                            aria-expanded="false">操作<span class="caret"></span></button>
                         <ul class="dropdown-menu" style="padding: 0px; border-radius: 20px;">
-                            <li><a class="a_top" style="padding-bottom: 3px; text-align: center;"
-                                    href="{{url_for('task.edit_task',task_id=task.id)}}">修改</a></li>
+                            <li><a class="a_top" style="text-align: center;"
+                                href="{{url_for('task.edit_todo',todo_id=todo.id)}}">修改</a></li>
                             <li><a class="a_bottom" style="text-align: center;"
-                                    href="{{url_for('task.new_task')}}">新增</a></li>
+                                    href="{{url_for('task.new_todo')}}">新增</a></li>
                         </ul>
                     </div>
                 </div>
 
             </div>
             <div class="panel panel-body">
-                <p>{{task.taskContent}}</p>
-                <div style="text-align:right">
-                    创建时间:{{task.taskInputTime.strftime('%Y-%m-%d %H:%M:%S')}}
-                </div>
+                <p>{{todo.tcontent}}</p>
             </div>
 
         </div>
         {% endfor %}
-        {% if tasks %}
+        {% if todoes %}
         <div class="page-footer" style="text-align: center;">
             {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}</div>
         {% endif %}
