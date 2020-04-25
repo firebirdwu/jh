@@ -23,6 +23,17 @@
             text-align: center;
             box-shadow: 0 0 4px 0px black;
         }
+
+        .a_top {
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+
+        .a_bottom {
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
     </style>
     {% endblock style %}
     {% block headscript %}
@@ -47,8 +58,22 @@
             <div id="navbar" class=" nav navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li class=" active"><a href="{{url_for('index')}}">主页</a></li>
-                    <li><a href='{{url_for('task.new_task')}}'>事项清单新增</a></li>
-                    <li><a href='{{url_for('task.new_todo')}}'>待办事项</a></li>
+                    <li class=" dropdown">
+                        <a href="#" class=" dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">事项清单<span class=" caret"></span></a>
+                        <ul class=" dropdown-menu" style="padding: 0px;border-radius: 20px;">
+                            <li><a class="a_top" href='{{url_for('task.task_list')}}'>清单</a></li>
+                            <li><a class="a_bottom" href='{{url_for('task.new_task')}}'>新增</a></li>
+                        </ul>
+                    </li>
+                    <li class=" dropdown">
+                        <a href="#" class=" dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                            aria-expanded="false">待办清单<span class=" caret"></span></a>
+                        <ul class=" dropdown-menu" style="padding: 0px;border-radius: 20px;">
+                            <li><a class="a_top" href='{{url_for('task.todo_list')}}'>清单</a></li>
+                            <li><a class="a_bottom" href='{{url_for('task.new_todo')}}'>新增</a></li>
+                        </ul>
+                    </li>
                 </ul>
                 <ul class=" nav navbar-nav navbar-right">
                     {% if current_user.is_authenticated %}

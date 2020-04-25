@@ -52,23 +52,20 @@
             <div class="col-md-3">
                 <label class=" control-label">事项清单总数:<span class=" badge">{{pagination.total}}</span></label>
             </div>
-            <form class="form-inline" method="POST" action="{{url_for('task.task_list')}}" >               
+            <div class="col-md-9 col-sm-12">
+            <form class="form-inline" method="POST" action="{{url_for('task.task_list')}}">
                 {{ searchform.csrf_token }}
-                <div id='datestart' class="input-group date " style="padding-right: 10px;">
-                    {{searchform.dateStart(placeholder='开始日期')}}
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-th"></span>
-                    </div>
+                <div id='datestart' class=" col-md-5 col-sm-12 input-group date ">
+                    {{searchform.dateStart(class_='form-control',placeholder='开始日期')}}
+                        <span class="input-group-addon glyphicon glyphicon-th"></span>
                 </div>
-                <div id='dateend' class="input-group date " style="padding-right: 20px;">
-                    {{searchform.dateEnd(placeholder='结束日期')}}
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-th"></span>
-                    </div>
+                <div id='dateend' class=" col-md-5 col-sm-12 input-group date ">
+                    {{searchform.dateEnd(class_='form-control',placeholder='结束日期')}}
+                    <span class=" input-group-addon glyphicon glyphicon-th"></span>
                 </div>
                 {{ searchform.submit(class_='btn btn-default')}}
             </form>
-
+            </div>
         </div>
         <hr>
         {% for task in tasks %}
