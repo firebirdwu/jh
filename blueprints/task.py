@@ -86,10 +86,11 @@ def todo_list():
         username = Users.query.filter_by(id=current_user.id).first().username
         page = request.args.get('page', 1, type=int)
         per_page = current_app.config['PER_PAGE']
-        paginate = Todo.query.filter_by(username=username).order_by(Todo.id.desc()).paginate(page, per_page=per_page)
+        paginate = Todo.query.filter(and_(Todo.username==username,Todo.tstatus=='完成')).order_by(Todo.id.desc()).paginate(page, per_page=per_page)
         todoes= paginate.items
-        print("=========")
-        return render_template('task/todolist.html', pagination=paginate, todoes=todoes)
+        paginate2 = Todo.query.filter(and_(Todo.username==username,Todo.tstatus=='未完成')).order_by(Todo.id.desc()).paginate(page, per_page=per_page)
+        undoes= paginate2.items
+        return render_template('task/todolist_tabs.html', pagination=paginate, pagination2=paginate2, todoes=todoes,undoes=undoes)
 
 
 
