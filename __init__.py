@@ -48,6 +48,9 @@ def register_blueprints(app):
     @app.route('/')
     def index():
         return render_template('index.html')
+    @app.route('/about')
+    def about():
+        return render_template('about/about.html')
 
 def register_shell_context(app):
     @app.shell_context_processor
@@ -80,7 +83,18 @@ def register_commands(app):
             click.echo(e)
             click.echo('插入失败')
     """
-    
+    @app.cli.command()
+    @click.option('--drop',is_flag=True,help='create after drop')
+    def initdb(drop):
+        """ initialize the database """
+        if drop:
+            click.confirm('this operation will drop database ,are you sure continue?',abort=True)
+            db.drop_all()
+            click.echo('drop tables')
+        db.create_all()
+        click.echo('initialized database.')
+
+
 def register_template_context(app):
     @app.context_processor
     def make_template_context():

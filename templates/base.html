@@ -53,7 +53,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">任务处理</a>
+                <a class="navbar-brand" href="#">稽核系统</a>
             </div>
             <div id="navbar" class=" nav navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -74,8 +74,10 @@
                             <li><a class="a_bottom" href='{{url_for('task.new_todo')}}'>新增</a></li>
                         </ul>
                     </li>
+                    
                 </ul>
                 <ul class=" nav navbar-nav navbar-right">
+                    <li><a href="{{ url_for('about')}}">关于</a></li>
                     {% if current_user.is_authenticated %}
                     <li><a href="{{ url_for('auth.logout')}}"><span class=" glyphicon glyphicon-log-out">登出</span></a>
                     </li>
