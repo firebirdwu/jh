@@ -53,18 +53,18 @@
                 <label>事项清单总数:<span class=" badge">{{pagination.total}}</span></label>
             </div>
             <div class="col-md-9 col-sm-12">
-            <form class="form-inline" method="POST" action="{{url_for('task.task_list')}}">
-                {{ searchform.csrf_token }}
-                <div id='datestart' class=" col-md-5 col-sm-12 input-group date ">
-                    {{searchform.dateStart(class_='form-control',placeholder='开始日期')}}
+                <form class="form-inline" method="POST" action="{{url_for('task.task_list')}}">
+                    {{ searchform.csrf_token }}
+                    <div id='datestart' class=" col-md-5 col-sm-12 input-group date ">
+                        {{searchform.dateStart(class_='form-control',placeholder='开始日期')}}
                         <span class="input-group-addon glyphicon glyphicon-th"></span>
-                </div>
-                <div id='dateend' class=" col-md-5 col-sm-12 input-group date ">
-                    {{searchform.dateEnd(class_='form-control',placeholder='结束日期')}}
-                    <span class=" input-group-addon glyphicon glyphicon-th"></span>
-                </div>
-                {{ searchform.submit(class_='btn btn-default')}}
-            </form>
+                    </div>
+                    <div id='dateend' class=" col-md-5 col-sm-12 input-group date ">
+                        {{searchform.dateEnd(class_='form-control',placeholder='结束日期')}}
+                        <span class=" input-group-addon glyphicon glyphicon-th"></span>
+                    </div>
+                    {{ searchform.submit(class_='btn btn-default')}}
+                </form>
             </div>
         </div>
         <hr>

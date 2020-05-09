@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form  %}
+{% block title %}修改条目{% endblock %}
+{% block style %}
+{{ super() }}
+<link rel='stylesheet' href="{{ url_for('static',filename='bootstrap-datepicker/css/bootstrap-datepicker3.min.css')}}"
+    type="text/css">
+{% endblock %}
+{% block headscript %}
+{{ super() }}
+<script src="{{url_for('static',filename='bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
+<script src="{{url_for('static',filename='bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js')}}"></script>
+
+{% endblock %}
+{% block content %}
+<div class=" col-md-8 col-md-offset-2">
+    <div class="page-header" style="border-bottom-color:#999;text-align: center;">
+        <h1>校验结果处理</h1>
+    </div>
+    <div>
+        <dl class=" dl-horizontal">
+            <dt>校验代码</dt>
+            <dd>{{ result.checkcode}}</dd>
+            <dt>规则描述</dt>
+            <dd>{{ result.checkitemname}}</dd>
+            <dt>级别</dt>
+            <dd>{{ result.checklevel}}</dd>
+            <dt>表名</dt>
+            <dd>{{ result.checktable}}</dd>
+            <dt>表名中文</dt>
+            <dd>{{ result.checktablename}}</dd>
+        </dl>
+    </div>
+    <form class='form-horizontal' method="POST" action="{{url_for('task.edit_checkresult',check_id=check_id)}}">
+        {{ form.csrf_token }}
+        <div class="form-group">
+            <label class=" label label-primary">处理进度: </label>
+            {{ form.dealstatus(class_=('form-control))}}
+        </div>
+
+        <div class="form-group">
+            {{ form.checkremark(class_='form-control',placeholder='处理备注',rows='5') }}
+        </div>
+        <div class="col-sm-2 col-sm-offset-5">
+            {{ form.submit(class_="btn btn-lg btn-primary")}}
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $('#taskdate').datepicker({
+        format: 'yyyy-mm-dd',
+        language: 'zh-CN',
+        clearBtn: true,
+        endDate: "0d",
+        title: "任务时间",
+        todayHighlight: true,
+        keyboardNavigation: false,
+        autoclose: true
+    });
+</script>
+{% endblock %}

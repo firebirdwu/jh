@@ -4,7 +4,7 @@ from jh.settings import config
 from jh.blueprints.admin import admin_bp
 from jh.blueprints.auth import auth_bp
 from jh.blueprints.task import task_bp
-from jh.extensions import mail, db, bootstrap, moment, ckeditor,csrf,login_manager
+from jh.extensions import mail, db, bootstrap, moment, ckeditor,csrf,login_manager,excel
 from flask import render_template
 from jh.DBUtils import DbUtil
 from jh.models import Users
@@ -38,7 +38,7 @@ def register_extensions(app):
     mail.init_app(app)
     csrf.init_app(app)
     login_manager.init_app(app)
-
+    excel.init_excel(app)
 
 
 def register_blueprints(app):

@@ -1,8 +1,8 @@
 from flask import Blueprint, flash, render_template, redirect, url_for, request, current_app
-from jh.forms import TaskForm,SearchForm,TodoForm
+from jh.forms import TaskForm,SearchForm,TodoForm,CheckResultForm
 from flask_login import login_required, current_user
-from jh.models import Tasks,Todo
-from jh.extensions import db
+from jh.models import Tasks,Todo,CheckResult
+from jh.extensions import db,excel
 from jh.models import TaskGroup, TaskType, Users
 from sqlalchemy import and_
 
@@ -130,3 +130,51 @@ def edit_todo(todo_id):
     todoform.tcompletion.data=todo.tcompletion 
     todoform.tcontent.data=todo.tcontent 
     return render_template('task/edit_todo.html', todoform=todoform,todo_id=todo_id)
+
+@task_bp.route('/edit_checkresult/<int:check_id>', methods=['POST', 'GET'])
+@login_required
+def edit_checkresult(check_id):
+    fckrst = CheckResultForm()
+    result = CheckResult.query.filter_by(id=check_id).first()
+    if fckrst.validate_on_submit():
+        result.dealstatus = fckrst.dealstatus.data
+        result.checkremark = fckrst.checkremark.data
+        result.username = Users.query.filter_by(id=current_user.id).first().username
+        db.session.commit()
+        flash('修改成功 ', 'success')
+        return redirect(url_for('task.checkresult_list'))
+    fckrst.checkcode.data =	result.checkcode
+    fckrst.checkitemname.data = result.checkitemname
+    fckrst.checklevel.data =	result.checklevel
+    fckrst.checktable.data =	result.checktable
+    fckrst.checktablename.data =result.checktablename 
+    fckrst.checktableterm.data =result.checktableterm 
+    fckrst.checksucflag.data = 	result.checksucflag
+    fckrst.dmbegdate.data = 	result.dmbegdate
+    fckrst.dmenddate.data = 	result.dmenddate
+    fckrst.comcode.data = 	result.comcode
+    fckrst.checksql.data = 	result.checksql
+    fckrst.dealstatus.data = 	result.dealstatus
+    fckrst.checkremark.data = 	result.checkremark
+    fckrst.username.data =      result.username
+    return render_template('task/edit_checkresult.html', form=fckrst,check_id=check_id,result=result)
+
+@task_bp.route('/checkresult_list',methods=['POST','GET'])
+@login_required
+def checkresult_list():
+        username = Users.query.filter_by(id=current_user.id).first().username
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+        paginate = CheckResult.query.order_by(CheckResult.id).paginate(page, per_page=per_page)
+        results= paginate.items
+        return render_template('task/checkresult_list.html', pagination=paginate,  results=results)
+
+@task_bp.route('/handson_view',methods=['GET'])
+@login_required
+def handson_table():
+    return excel.make_response_from_tables(db.session,[Tasks,Todo],'handsontable.html')
+
+@task_bp.route('/export_table',methods=['GET'])
+@login_required
+def export_table():
+    return excel.make_response_from_tables(db.session,[Tasks,Todo],"xls")

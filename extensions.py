@@ -5,6 +5,7 @@ from flask_ckeditor import CKEditor
 from flask_moment import Moment
 from flask_login import LoginManager
 from flask_wtf import CSRFProtect
+import flask_excel  as excel 
 
 
 bootstrap = Bootstrap()

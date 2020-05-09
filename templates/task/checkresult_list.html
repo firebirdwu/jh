@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% block style %}
+{{ super() }}
+<style>
+    .panel-shadow {
+        box-shadow: 8px 7px 4px 7px #555;
+    }
+
+
+    .all_radius {
+        border-radius: 20px;
+    }
+
+
+    .a_top {
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+
+    .a_bottom {
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+
+    .dealed {
+        background-color: green;
+    }
+
+    .deal {
+        background-color: red;
+    }
+</style>
+{% endblock %}
+{% block headscript %}
+{{ super() }}
+<script src="{{url_for('static',filename='bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
+<script src="{{url_for('static',filename='bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js')}}"></script>
+<script>
+    $(function () {
+        $('.panel.panel-default').mouseover(function () {
+            $(this).addClass('panel-shadow')
+        });
+        $('.panel').mouseleave(function () {
+            $(this).removeClass('panel-shadow')
+        });
+    });
+
+</script>
+{% endblock%}
+{% block content %}
+<div class=" container">
+    {% if results %}
+    <div class="page-footer" style="text-align: center;">
+        {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}</div>
+    {% endif %}
+    <div>
+        <label>校验结果总数:<span class=" badge">{{pagination.total}}</span></label>
+        <a href="{{url_for('task.handson_table')}}">view</a>
+        <a href="{{url_for('task.export_table')}}">export</a>
+    </div>
+    <div class="table-responsive">
+        {% if results %}
+        <table class=" table table-hover text-nowrap">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>校验代码</th>
+                    <th>规则描述</th>
+                    <th>规则级别</th>
+                    <th>表名</th>
+                    <th>表名中文</th>
+                    <th>规则分组</th>
+                    <th>校验结果</th>
+                    <th>起始日期</th>
+                    <th>结束时间</th>
+                    <th>机构代码</th>
+                    <th>处理进度</th>
+                    <th>处理备注</th>
+                    <th>处理人</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr class="{% if result.dealstatus=='已完成' %} success {% else %} danger {% endif %}">
+                    <td>{{result.id}}</td>
+                    <td><a
+                            href="{{url_for('task.edit_checkresult',check_id=result.id )}}">{{result.checkcode}}</a>
+                    </td>
+                    <td>{{result.checkitemname}}</td>
+                    <td>{{result.checklevel}}</td>
+                    <td>{{result.checktable}}</td>
+                    <td>{{result.checktablename}}</td>
+                    <td>{{result.checktableterm}}</td>
+                    <td>{{result.checksucflag}}</td>
+                    <td>{{result.dmbegdate}}</td>
+                    <td>{{result.dmenddate}}</td>
+                    <td>{{result.comcode}}</td>
+                    <td>{{result.dealstatus}}</td>
+                    <td>{{result.checkremark}}</td>
+                    <td>{{result.username}}</td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    {% if results %}
+    <div class="page-footer" style="text-align: center;">
+        {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}</div>
+    {% endif %}
+</div>
+<script type="text/javascript">
+    $('#datestart,#dateend').datepicker({
+        format: 'yyyy-mm-dd',
+        language: 'zh-CN',
+        clearBtn: true,
+        endDate: "0d",
+        title: "任务时间",
+        todayHighlight: true,
+        keyboardNavigation: false,
+        autoclose: true
+    });
+</script>
+{% endblock %}
