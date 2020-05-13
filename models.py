@@ -28,13 +28,14 @@ class Tasks(db.Model):
     __tablename__ = "tasks"
     id = db.Column(db.Integer, primary_key=True)
     username=db.Column(db.String(30))
+    groupName = db.Column(db.String(30))
     taskType1 = db.Column(db.String(30))
     taskType2 = db.Column(db.String(30))
     taskName = db.Column(db.String(300))
     taskContent = db.Column(db.String(300))
     taskDate = db.Column(db.String(10))
     taskInputTime = db.Column(db.DateTime, default=datetime.utcnow)
-    groupName = db.Column(db.String(30))
+    
 
 class TaskGroup(db.Model):
     __tablename__ = "taskgroup"

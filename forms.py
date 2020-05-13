@@ -42,7 +42,8 @@ class TaskForm(FlaskForm):
 class SearchForm(FlaskForm):
     dateStart=StringField("开始日期:",validators=[DataRequired()])
     dateEnd=StringField("结束日期:",validators=[DataRequired()])
-    submit = SubmitField('查询')
+    userexport = BooleanField('导出')
+    submit = SubmitField('确定')
     
 class TodoForm(FlaskForm):
     tlevel = RadioField('级别:',coerce=str,choices=[('一般','一般'),('重要','重要'),('紧急','紧急')],default=1)

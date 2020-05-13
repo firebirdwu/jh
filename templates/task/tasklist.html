@@ -48,22 +48,29 @@
         {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}</div>
     {% endif %}
     <div class=" col-md-8 col-md-offset-2">
-        <div class="row">
-            <div class="col-md-3">
+        <div class="row"  style="padding-left: 25px;">
+            <div>
                 <label>事项清单总数:<span class=" badge">{{pagination.total}}</span></label>
             </div>
-            <div class="col-md-9 col-sm-12">
+            <div>
                 <form class="form-inline" method="POST" action="{{url_for('task.task_list')}}">
                     {{ searchform.csrf_token }}
-                    <div id='datestart' class=" col-md-5 col-sm-12 input-group date ">
+                    <div id='datestart' class="col-md-4 input-group date ">
                         {{searchform.dateStart(class_='form-control',placeholder='开始日期')}}
                         <span class="input-group-addon glyphicon glyphicon-th"></span>
                     </div>
-                    <div id='dateend' class=" col-md-5 col-sm-12 input-group date ">
+                    <div id='dateend' class="col-md-4 input-group date ">
                         {{searchform.dateEnd(class_='form-control',placeholder='结束日期')}}
                         <span class=" input-group-addon glyphicon glyphicon-th"></span>
                     </div>
-                    {{ searchform.submit(class_='btn btn-default')}}
+                    <div class="checkbox col-md-1 input-group">
+                        {{searchform.userexport}}
+                        {{searchform.userexport.label}}
+                    </div>
+                    <div class="col-md-2  input-group">
+                        {{ searchform.submit(class_='btn btn-default')}}
+                    </div>
+                   
                 </form>
             </div>
         </div>

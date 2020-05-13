@@ -15,11 +15,17 @@ task_bp = Blueprint('task', __name__)
 def task_list():
     searchForm=SearchForm()
     if searchForm.validate_on_submit():
+        username = Users.query.filter_by(id=current_user.id).first().username
         startdate = searchForm.dateStart.data
         enddate = searchForm.dateEnd.data
+        userexport=searchForm.userexport.data
+        if userexport:
+            querySet=Tasks.query.filter(and_(Tasks.taskDate>=startdate, Tasks.taskDate <=enddate,Tasks.username==username)).all()
+            columnNames=['username','groupName','taskType1','taskType2','taskName','taskContent','taskDate']
+            return excel.make_response_from_query_sets(querySet,columnNames,"xls",file_name='tasks',sheet_name='tasks')
         page = request.args.get('page', 1, type=int)
         per_page = current_app.config['PER_PAGE']
-        paginate = Tasks.query.filter(and_(Tasks.taskDate>=startdate, Tasks.taskDate <=enddate)).\
+        paginate = Tasks.query.filter(and_(Tasks.taskDate>=startdate, Tasks.taskDate <=enddate,Tasks.username==username)).\
             order_by(Tasks.taskInputTime.desc()).paginate(page, per_page=per_page)
         tasks= paginate.items
         return render_template('task/tasklist.html', pagination=paginate, tasks=tasks,searchform=searchForm)
