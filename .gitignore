@@ -1,3 +1,4 @@
 settings.py
 test.py
 .DS_Store
+*.pyc
