@@ -57,8 +57,6 @@
     {% endif %}
     <div>
         <label>校验结果总数:<span class=" badge">{{pagination.total}}</span></label>
-        <a href="{{url_for('task.handson_table')}}">view</a>
-        <a href="{{url_for('task.export_table')}}">export</a>
     </div>
     <div class="table-responsive">
         {% if results %}

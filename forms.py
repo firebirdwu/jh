@@ -68,3 +68,8 @@ class CheckResultForm(FlaskForm):
     checkremark = TextAreaField("处理备注:")
     username = StringField("处理人:")
     submit = SubmitField('确认')
+
+class ImportChecklist(FlaskForm):
+    
+    filechecklist=StringField("file",validators=[DataRequired()])
+    submit = SubmitField('确认')

@@ -17,32 +17,30 @@
     <div class="page-header" style="border-bottom-color:#999;text-align: center;">
         <h1>校验结果处理</h1>
     </div>
-    <div>
-        <dl class=" dl-horizontal">
-            <dt>校验代码</dt>
-            <dd>{{ result.checkcode}}</dd>
-            <dt>规则描述</dt>
-            <dd>{{ result.checkitemname}}</dd>
-            <dt>级别</dt>
-            <dd>{{ result.checklevel}}</dd>
-            <dt>表名</dt>
-            <dd>{{ result.checktable}}</dd>
-            <dt>表名中文</dt>
-            <dd>{{ result.checktablename}}</dd>
-        </dl>
-    </div>
+    
     <form class='form-horizontal' method="POST" action="{{url_for('task.edit_checkresult',check_id=check_id)}}">
-        {{ form.csrf_token }}
-        <div class="form-group">
-            <label class=" label label-primary">处理进度: </label>
-            {{ form.dealstatus(class_=('form-control))}}
+        {{ edtform.csrf_token }}
+        <div>
+            <dl class=" dl-horizontal">
+                <dt>校验代码:</dt>
+                <dd>{{ result.checkcode}}</dd>
+                <dt>规则描述</dt>
+                <dd>{{ result.checkitemname}}</dd>
+                <dt>级别:</dt>
+                <dd>{{ result.checklevel}}</dd>
+                <dt>表名:</dt>
+                <dd>{{ result.checktable}}</dd>
+                <dt>表名中文:</dt>
+                <dd>{{ result.checktablename}}</dd>
+                <dt>处理进度:</dt>
+                <dd>{{ edtform.dealstatus(class_=('col-md-3'))}}</dd>
+            </dl>
         </div>
-
         <div class="form-group">
-            {{ form.checkremark(class_='form-control',placeholder='处理备注',rows='5') }}
+            {{ edtform.checkremark(class_=('form-control'),placeholder='处理备注',rows='5') }}
         </div>
         <div class="col-sm-2 col-sm-offset-5">
-            {{ form.submit(class_="btn btn-lg btn-primary")}}
+            {{ edtform.submit(class_="btn btn-lg btn-primary")}}
         </div>
     </form>
 </div>

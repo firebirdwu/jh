@@ -1,9 +1,8 @@
 from flask import Blueprint, flash, render_template, redirect, url_for, request, current_app
-from jh.forms import TaskForm,SearchForm,TodoForm,CheckResultForm
+from jh.forms import TaskForm,SearchForm,TodoForm,CheckResultForm,ImportChecklist
 from flask_login import login_required, current_user
-from jh.models import Tasks,Todo,CheckResult
+from jh.models import Tasks,Todo,CheckResult,TaskGroup, TaskType, Users
 from jh.extensions import db,excel
-from jh.models import TaskGroup, TaskType, Users
 from sqlalchemy import and_
 
 
@@ -163,24 +162,54 @@ def edit_checkresult(check_id):
     fckrst.dealstatus.data = 	result.dealstatus
     fckrst.checkremark.data = 	result.checkremark
     fckrst.username.data =      result.username
-    return render_template('task/edit_checkresult.html', form=fckrst,check_id=check_id,result=result)
+    return render_template('task/edit_checkresult.html',edtform=fckrst,check_id=check_id,result=result)
 
 @task_bp.route('/checkresult_list',methods=['POST','GET'])
 @login_required
 def checkresult_list():
         username = Users.query.filter_by(id=current_user.id).first().username
         page = request.args.get('page', 1, type=int)
-        per_page = 10
-        paginate = CheckResult.query.order_by(CheckResult.id).paginate(page, per_page=per_page)
+        per_page = 20
+        paginate = CheckResult.query.order_by(CheckResult.checklevel.desc()).paginate(page, per_page=per_page)
         results= paginate.items
         return render_template('task/checkresult_list.html', pagination=paginate,  results=results)
 
 @task_bp.route('/handson_view',methods=['GET'])
 @login_required
 def handson_table():
-    return excel.make_response_from_tables(db.session,[Tasks,Todo],'handsontable.html')
+    return excel.make_response_from_tables(db.session,[CheckResult],'handsontable.html')
 
 @task_bp.route('/export_table',methods=['GET'])
 @login_required
 def export_table():
     return excel.make_response_from_tables(db.session,[Tasks,Todo],"xls")
+
+
+@task_bp.route('/import_checklist',methods=['POST','GET'])
+@login_required
+def import_checklist():
+    importForm=ImportChecklist()
+    
+    if importForm.validate_on_submit():
+        CheckResult.query.delete()
+        def checkResult_init_func(row):
+            cl=CheckResult()
+            cl.id = row['id']
+            cl.checkcode = row['checkcode'] 
+            cl.checkitemname = row['checkitemname'] 
+            cl.checklevel = row['checklevel'] 
+            cl.checktable = row['checktable'] 
+            cl.checktablename = row['checktablename'] 
+            cl.checktableterm = row['checktableterm'] 
+            cl.checksucflag = row['checksucflag'] 
+            cl.dmbegdate = row['dmbegdate'] 
+            cl.dmenddate = row['dmenddate'] 
+            cl.comcode = row['comcode']
+            return cl
+        request.save_book_to_database(
+                field_name='filechecklist', 
+                session=db.session,
+                tables=[CheckResult],
+                initializers=[checkResult_init_func])
+        return redirect(url_for('.handson_table'),code=302)
+    return render_template('task/import_checklist.html',form=importForm)
