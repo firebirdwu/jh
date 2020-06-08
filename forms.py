@@ -23,6 +23,12 @@ class RegistForm(FlaskForm):
         '确认密码', validators=[DataRequired(), Length(8, 128)])
     submit = SubmitField('注册')
 
+class SearchForm(FlaskForm):
+    dateStart=StringField("开始日期:",validators=[DataRequired()])
+    dateEnd=StringField("结束日期:",validators=[DataRequired()])
+    userexport = BooleanField('导出')
+    submit = SubmitField('确定')
+
 
 class TaskForm(FlaskForm):
     date=StringField("日期",validators=[DataRequired()],default=datetime.now().strftime('%Y-%m-%d'))
@@ -38,12 +44,6 @@ class TaskForm(FlaskForm):
         self.groupname.choices = [(group.groupname,group.groupname) for group in TaskGroup.query.order_by(TaskGroup.id).all()]
         self.taskType1.choices = [(task.name,task.name) for task in TaskType.query.filter_by(tasklevel=1).order_by(TaskType.id).all()]
         self.taskType2.choices = [(task.name,task.name) for task in TaskType.query.filter_by(tasklevel=2).order_by(TaskType.id).all()]
-    
-class SearchForm(FlaskForm):
-    dateStart=StringField("开始日期:",validators=[DataRequired()])
-    dateEnd=StringField("结束日期:",validators=[DataRequired()])
-    userexport = BooleanField('导出')
-    submit = SubmitField('确定')
     
 class TodoForm(FlaskForm):
     tlevel = RadioField('级别:',coerce=str,choices=[('一般','一般'),('重要','重要'),('紧急','紧急')],default=1)
@@ -73,3 +73,7 @@ class ImportChecklist(FlaskForm):
     
     filechecklist=StringField("file",validators=[DataRequired()])
     submit = SubmitField('确认')
+        
+class BankcodeSearchForm(FlaskForm):
+    searchText=StringField("查询条件:",validators=[DataRequired()])
+    submit = SubmitField('确定')

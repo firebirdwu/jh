@@ -1,9 +1,9 @@
 from flask import Blueprint, flash, render_template, redirect, url_for, request, current_app
-from jh.forms import TaskForm,SearchForm,TodoForm,CheckResultForm,ImportChecklist
+from jh.forms import TaskForm,SearchForm,TodoForm,CheckResultForm,ImportChecklist,BankcodeSearchForm  
 from flask_login import login_required, current_user
 from jh.models import Tasks,Todo,CheckResult,TaskGroup, TaskType, Users,BankCode
 from jh.extensions import db,excel
-from sqlalchemy import and_
+from sqlalchemy import and_,or_
 
 
 task_bp = Blueprint('task', __name__)
@@ -221,11 +221,17 @@ def import_checklist():
 @task_bp.route('/bankcode_list',methods=['POST','GET'])
 @login_required
 def bankcode_list():
-        search=request.args.get('params','111')
-        print(search)
-        username = Users.query.filter_by(id=current_user.id).first().username
-        page = request.args.get('page', 1, type=int)
-        per_page = 1000
-        paginate = BankCode.query.paginate(page, per_page=per_page)
-        results= paginate.items
-        return render_template('task/bankcode_list.html',results=results,pagination=paginate)
+        bankSearchForm=BankcodeSearchForm()
+        if bankSearchForm.validate_on_submit():
+            searchText=bankSearchForm.searchText.data
+            page = request.args.get('page', 1, type=int)
+            per_page = 10
+            paginate = BankCode.query.filter(or_(BankCode.bankcode.like('%'+searchText+'%'),BankCode.bankname.like('%'+searchText+'%'),BankCode.bankaddress.like('%'+searchText+'%'))).paginate(page, per_page=per_page)
+            results= paginate.items
+            return render_template('task/bankcode_list.html',searchform=bankSearchForm,results=results,pagination=paginate)
+        else:
+            page = request.args.get('page', 1, type=int)
+            per_page = 1000
+            paginate = BankCode.query.paginate(page, per_page=per_page)
+            results= paginate.items
+            return render_template('task/bankcode_list.html',searchform=bankSearchForm, results=results,pagination=paginate)

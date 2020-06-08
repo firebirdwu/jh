@@ -38,15 +38,23 @@
 {% block content %}
 <div class=" container">
     {% if results %}
-    <div class="page-footer" style="text-align: center;">
-        {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}
+    <div class="row">
+        <div class="col-md-6">
+            {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}
+        </div>
+        <div class="col-md-6" style="padding-top: 20px;text-align: right;">
+            <form class="form-inline" method="POST" action="{{url_for('task.bankcode_list')}}">
+                {{ searchform.csrf_token }}
+                <div class="form-group">
+                    {{searchform.searchText.label}}
+                    {{searchform.searchText(class_='form-control',placeholder='请输入查询条件')}}
+                </div>
+                {{ searchform.submit(class_='btn btn-default')}}
+            </form>
+        </div>
     </div>
     <div>
-        <table id='table' 
-               data-toggle="table" 
-               data-height="560" 
-               data-show-columns="true"
-               data-virtual-scroll="true">
+        <table id='table' data-toggle="table" data-height="560" data-show-columns="true" data-virtual-scroll="true">
             <thead>
                 <tr>
                     <th>#</th>
@@ -78,8 +86,8 @@
 {{super()}}
 <script>
     function queryParams(params) {
-      params.search = '8'
-      return params
+        params.search = '8'
+        return params
     }
 </script>
 <script src="../static/js/popper.min.js"></script>
