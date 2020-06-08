@@ -5,7 +5,6 @@ from flask_login import UserMixin
 
 
 class Users(db.Model, UserMixin):
-    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20))
     password_hash = db.Column(db.String(128))
@@ -69,3 +68,11 @@ class CheckResult(db.Model):
     checkremark = db.Column(db.String(500))
     username = db.Column(db.String(500))
 
+class BankCode(db.Model):
+    __tablename__="BankCode"
+    id=db.Column(db.Integer,primary_key=True)
+    codetype=db.Column(db.String(50))
+    bankcode=db.Column(db.String(50))
+    bankname=db.Column(db.String(200))
+    bankaddress=db.Column(db.String(1000))
+    

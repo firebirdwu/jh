@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% block style %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-table.min.css')}}">
+<style>
+    .panel-shadow {
+        box-shadow: 8px 7px 4px 7px #555;
+    }
+
+
+    .all_radius {
+        border-radius: 20px;
+    }
+
+
+    .a_top {
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+
+    .a_bottom {
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+
+    .dealed {
+        background-color: green;
+    }
+
+    .deal {
+        background-color: red;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class=" container">
+    {% if results %}
+    <div class="page-footer" style="text-align: center;">
+        {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}
+    </div>
+    <div>
+        <table id='table' 
+               data-toggle="table" 
+               data-height="560" 
+               data-show-columns="true"
+               data-virtual-scroll="true">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th data-field='codetype'>金融机构类型</th>
+                    <th data-field='bankcode'>金融机构代码</th>
+                    <th data-field='bankname'>金融机构名称</th>
+                    <th data-field='bankaddress'>地址</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td>{{result.id}}</td>
+                    <!-- <td><a href="{{url_for('task.edit_checkresult',check_id=result.id )}}">{{result.checkcode}}</a> -->
+                    </td>
+                    <td>{{result.codetype}}</td>
+                    <td>{{result.bankcode}}</td>
+                    <td>{{result.bankname}}</td>
+                    <td>{{result.bankaddress}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script>
+    function queryParams(params) {
+      params.search = '8'
+      return params
+    }
+</script>
+<script src="../static/js/popper.min.js"></script>
+<script src="../static/js/bootstrap-table.min.js"></script>
+{% endblock%}

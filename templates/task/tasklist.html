@@ -1,24 +1,16 @@
 {% extends 'base.html' %}
 {% from 'bootstrap/pagination.html' import render_pagination %}
+{% block title %}任务列表{% endblock %}
 {% block style %}
 {{ super() }}
+<link rel='stylesheet' href="{{ url_for('static',filename='bootstrap-datepicker/css/bootstrap-datepicker3.min.css')}}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-table.min.css')}}">
+<link href="https://unpkg.com/jquery-resizable-columns@0.2.3/dist/jquery.resizableColumns.css" rel="stylesheet">
 <style>
-    .panel-shadow {
-        box-shadow: 8px 7px 4px 7px #555;
-    }
-
-
-    .all_radius {
-        border-radius: 20px;
-    }
-
-
     .a_top {
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
     }
-
-
     .a_bottom {
         border-bottom-left-radius: 20px;
         border-bottom-right-radius: 20px;
@@ -29,88 +21,93 @@
 {{ super() }}
 <script src="{{url_for('static',filename='bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{url_for('static',filename='bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js')}}"></script>
-<script>
-    $(function () {
-        $('.panel.panel-default').mouseover(function () {
-            $(this).addClass('panel-shadow')
-        });
-        $('.panel').mouseleave(function () {
-            $(this).removeClass('panel-shadow')
-        });
-    });
-
-</script>
 {% endblock%}
+
 {% block content %}
 <div class=" container">
-    {% if tasks %}
-    <div class="page-footer" style="text-align: center;">
-        {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}</div>
-    {% endif %}
-    <div class=" col-md-8 col-md-offset-2">
-        <div class="row"  style="padding-left: 25px;">
-            <div>
-                <label>事项清单总数:<span class=" badge">{{pagination.total}}</span></label>
-            </div>
-            <div>
-                <form class="form-inline" method="POST" action="{{url_for('task.task_list')}}">
-                    {{ searchform.csrf_token }}
-                    <div id='datestart' class="col-md-4 input-group date ">
-                        {{searchform.dateStart(class_='form-control',placeholder='开始日期')}}
-                        <span class="input-group-addon glyphicon glyphicon-th"></span>
-                    </div>
-                    <div id='dateend' class="col-md-4 input-group date ">
-                        {{searchform.dateEnd(class_='form-control',placeholder='结束日期')}}
-                        <span class=" input-group-addon glyphicon glyphicon-th"></span>
-                    </div>
-                    <div class="checkbox col-md-1 input-group">
-                        {{searchform.userexport}}
-                        {{searchform.userexport.label}}
-                    </div>
-                    <div class="col-md-2  input-group">
-                        {{ searchform.submit(class_='btn btn-default')}}
-                    </div>
-                   
-                </form>
-            </div>
-        </div>
-        <hr>
-        {% for task in tasks %}
-        <div class=" panel panel-default" style="border-radius: 20px;">
-            <!-- <p>{{task.taskContent}}</p> -->
-            <div class="panel-heading a_top">
-                <div class=" row">
-                    <div class="col-sm-10">
-                        作者:{{task.username}} |事项时间:{{task.taskDate}} |分组:{{task.groupName}}|类型1:{{task.taskType1}}
-                        |类型2:{{task.taskType2}}
-                    </div>
-                    <div class="input-group-btn">
-                        <button type="button" style="border-radius: 20px;"
-                            class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">操作 <span class="caret"></span></button>
-                        <ul class="dropdown-menu" style="padding: 0px; border-radius: 20px;">
-                            <li><a class="a_top" style="padding-bottom: 3px; text-align: center;"
-                                    href="{{url_for('task.edit_task',task_id=task.id)}}">修改</a></li>
-                            <li><a class="a_bottom" style="text-align: center;"
-                                    href="{{url_for('task.new_task')}}">新增</a></li>
-                        </ul>
+    <div class="row">
+        <div class="col-md-10 col-md-offset-2">
+            <form class="form-inline" method="POST" action="{{url_for('task.task_list')}}">
+                {{ searchform.csrf_token }}
+                <div id='datestart' class="input-group date col-md-4">
+                    {{searchform.dateStart(class_='form-control',placeholder='开始日期')}}
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
                     </div>
                 </div>
-
-            </div>
-            <div class="panel panel-body">
-                <p>{{task.taskContent}}</p>
-                <div style="text-align:right">
-                    创建时间:{{task.taskInputTime.strftime('%Y-%m-%d %H:%M:%S')}}
+                <div id='dateend' class="col-md-4 input-group date ">
+                    {{searchform.dateEnd(class_='form-control',placeholder='结束日期')}}
+                    <span class=" input-group-addon glyphicon glyphicon-th"></span>
                 </div>
-            </div>
+                <div class="col-md-2  input-group">
+                    {{ searchform.submit(class_='btn btn-default')}}
+                </div>
 
+            </form>
         </div>
-        {% endfor %}
-        {% if tasks %}
-        <div class="page-footer" style="text-align: center;">
-            {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}</div>
-        {% endif %}
+    </div>
+    <hr>
+    <div class="row">
+        <table id='table'
+            data-toggle="table" 
+            data-height="480" 
+            data-show-columns="true" 
+            data-pagination="true"
+            data-search="true" 
+            data-page-size='15'
+            data-locale="zh-CN"
+            data-pagination-pre-text="下一页" 
+            data-pagination-next-text="上一页"
+            data-search="true" 
+            data-search-on-enter-kevby="true"
+            data-show-export='true'
+            data-resizable="true"
+            data-show-fullscreen="true" 
+            data-virtual-scroll='true'
+            >
+            <thead class="thead-dark" style="background-color: black; color: white;">
+                <tr>
+                    <th>#</th>
+                    <th data-field='操作'>操作</th>
+                    <th data-field='创建人'>创建人</th>
+                    <th data-field='归属组'>归属组</th>
+                    <th data-field='任务类型1'>任务类型1</th>
+                    <th data-field='任务类型2'>任务类型2</th>
+                    <th data-field='任务名称'>任务名称</th>
+                    <th data-field='任务描述'>任务描述</th>
+                    <th data-field='任务日期' data-sortable='true'>任务日期</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>{{task.id}}</td>
+                    <td>
+                        <div class="input-group-btn">
+                            <button type="button" style="border-radius: 20px;"
+                                class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">操作 <span class="caret"></span></button>
+                            <ul class="dropdown-menu" style="padding: 0px; border-radius: 20px;">
+                                <li><a class="a_top" style="padding-bottom: 3px; text-align: center;"
+                                        href="{{url_for('task.edit_task',task_id=task.id)}}">修改</a></li>
+                                <li><a class="a_bottom" style="text-align: center;"
+                                        href="{{url_for('task.new_task')}}">新增</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td>{{task.username}}</td>
+                    <td>{{task.groupName}}</td>
+                    <td>{{task.taskType1}}</td>
+                    <td>{{task.taskType2}}</td>
+                    <td>{{task.taskName}}</td>
+                    <td>{{task.taskContent}}</td>
+                    <td>{{task.taskDate}}</td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 <script type="text/javascript">
@@ -119,10 +116,20 @@
         language: 'zh-CN',
         clearBtn: true,
         endDate: "0d",
-        title: "任务时间",
+        title: "任务开始时间",
         todayHighlight: true,
         keyboardNavigation: false,
         autoclose: true
     });
 </script>
 {% endblock %}
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('static',filename='js/tableExport.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/popper.min.js')}}"></script>
+<script src="https://unpkg.com/jquery-resizable-columns@0.2.3/dist/jquery.resizableColumns.min.js"></script>
+<script src="{{url_for('static',filename='js/bootstrap-table.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/bootstrap-table-locale-all.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/bootstrap-table-export.min.js')}}"></script>
+<script src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/resizable/bootstrap-table-resizable.min.js"></script>
+{% endblock%}

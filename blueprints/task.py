@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, render_template, redirect, url_for, request, current_app
 from jh.forms import TaskForm,SearchForm,TodoForm,CheckResultForm,ImportChecklist
 from flask_login import login_required, current_user
-from jh.models import Tasks,Todo,CheckResult,TaskGroup, TaskType, Users
+from jh.models import Tasks,Todo,CheckResult,TaskGroup, TaskType, Users,BankCode
 from jh.extensions import db,excel
 from sqlalchemy import and_
 
@@ -17,24 +17,28 @@ def task_list():
         username = Users.query.filter_by(id=current_user.id).first().username
         startdate = searchForm.dateStart.data
         enddate = searchForm.dateEnd.data
-        userexport=searchForm.userexport.data
-        if userexport:
-            querySet=Tasks.query.filter(and_(Tasks.taskDate>=startdate, Tasks.taskDate <=enddate,Tasks.username==username)).all()
-            columnNames=['username','groupName','taskType1','taskType2','taskName','taskContent','taskDate']
-            return excel.make_response_from_query_sets(querySet,columnNames,"xls",file_name='tasks',sheet_name='tasks')
-        page = request.args.get('page', 1, type=int)
-        per_page = current_app.config['PER_PAGE']
-        paginate = Tasks.query.filter(and_(Tasks.taskDate>=startdate, Tasks.taskDate <=enddate,Tasks.username==username)).\
-            order_by(Tasks.taskInputTime.desc()).paginate(page, per_page=per_page)
-        tasks= paginate.items
-        return render_template('task/tasklist.html', pagination=paginate, tasks=tasks,searchform=searchForm)
+        #userexport=searchForm.userexport.data
+        # if userexport:
+        #     querySet=Tasks.query.filter(and_(Tasks.taskDate>=startdate, Tasks.taskDate <=enddate,Tasks.username==username)).all()
+        #     columnNames=['username','groupName','taskType1','taskType2','taskName','taskContent','taskDate']
+        #     return excel.make_response_from_query_sets(querySet,columnNames,"xls",file_name='tasks',sheet_name='tasks')
+        
+        # page = request.args.get('page', 1, type=int)
+        # per_page = current_app.config['PER_PAGE']
+        # paginate = Tasks.query.filter(and_(Tasks.taskDate>=startdate, Tasks.taskDate <=enddate,Tasks.username==username)).\
+        #     order_by(Tasks.taskInputTime.desc()).paginate(page, per_page=per_page)
+        # tasks= paginate.items
+        tasks=Tasks.query.filter(and_(Tasks.taskDate>=startdate, Tasks.taskDate <=enddate,Tasks.username==username)).\
+            order_by(Tasks.taskInputTime.desc())
+        return render_template('task/tasklist.html', tasks=tasks,searchform=searchForm)
     else:
         username = Users.query.filter_by(id=current_user.id).first().username
-        page = request.args.get('page', 1, type=int)
-        per_page = current_app.config['PER_PAGE']
-        paginate = Tasks.query.filter_by(username=username).order_by(Tasks.taskInputTime.desc()).paginate(page, per_page=per_page)
-        tasks= paginate.items
-        return render_template('task/tasklist.html', pagination=paginate, tasks=tasks,searchform=searchForm)
+        # page = request.args.get('page', 1, type=int)
+        # per_page = current_app.config['PER_PAGE']
+        # paginate = Tasks.query.filter_by(username=username).order_by(Tasks.taskInputTime.desc()).paginate(page, per_page=per_page)
+        # tasks= paginate.items
+        tasks=Tasks.query.filter_by(username=username).order_by(Tasks.taskInputTime.desc())
+        return render_template('task/tasklist.html',tasks=tasks,searchform=searchForm)
 
 
 @task_bp.route('/new_task', methods=['POST', 'GET'])
@@ -168,11 +172,11 @@ def edit_checkresult(check_id):
 @login_required
 def checkresult_list():
         username = Users.query.filter_by(id=current_user.id).first().username
-        page = request.args.get('page', 1, type=int)
-        per_page = 20
-        paginate = CheckResult.query.order_by(CheckResult.checklevel.desc()).paginate(page, per_page=per_page)
-        results= paginate.items
-        return render_template('task/checkresult_list.html', pagination=paginate,  results=results)
+        #page = request.args.get('page', 1, type=int)
+        #per_page = 20
+        results = CheckResult.query.order_by(CheckResult.checklevel.desc())
+        #results= paginate.items
+        return render_template('task/checkresult_list.html',results=results)
 
 @task_bp.route('/handson_view',methods=['GET'])
 @login_required
@@ -194,7 +198,7 @@ def import_checklist():
         CheckResult.query.delete()
         def checkResult_init_func(row):
             cl=CheckResult()
-            cl.id = row['id']
+            #cl.id = row['id']
             cl.checkcode = row['checkcode'] 
             cl.checkitemname = row['checkitemname'] 
             cl.checklevel = row['checklevel'] 
@@ -213,3 +217,15 @@ def import_checklist():
                 initializers=[checkResult_init_func])
         return redirect(url_for('.handson_table'),code=302)
     return render_template('task/import_checklist.html',form=importForm)
+
+@task_bp.route('/bankcode_list',methods=['POST','GET'])
+@login_required
+def bankcode_list():
+        search=request.args.get('params','111')
+        print(search)
+        username = Users.query.filter_by(id=current_user.id).first().username
+        page = request.args.get('page', 1, type=int)
+        per_page = 1000
+        paginate = BankCode.query.paginate(page, per_page=per_page)
+        results= paginate.items
+        return render_template('task/bankcode_list.html',results=results,pagination=paginate)

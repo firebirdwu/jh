@@ -2,6 +2,7 @@
 {% from 'bootstrap/pagination.html' import render_pagination %}
 {% block style %}
 {{ super() }}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-table.min.css')}}">
 <style>
     .panel-shadow {
         box-shadow: 8px 7px 4px 7px #555;
@@ -33,58 +34,37 @@
     }
 </style>
 {% endblock %}
-{% block headscript %}
-{{ super() }}
-<script src="{{url_for('static',filename='bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
-<script src="{{url_for('static',filename='bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js')}}"></script>
-<script>
-    $(function () {
-        $('.panel.panel-default').mouseover(function () {
-            $(this).addClass('panel-shadow')
-        });
-        $('.panel').mouseleave(function () {
-            $(this).removeClass('panel-shadow')
-        });
-    });
 
-</script>
-{% endblock%}
 {% block content %}
 <div class=" container">
     {% if results %}
-    <div class="page-footer" style="text-align: center;">
-        {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}</div>
-    {% endif %}
     <div>
-        <label>校验结果总数:<span class=" badge">{{pagination.total}}</span></label>
-    </div>
-    <div class="table-responsive">
-        {% if results %}
-        <table class=" table table-hover text-nowrap">
+        <table id='table' data-toggle="table" data-height="560" data-show-columns="true" data-pagination="true"
+            data-search="true" data-page-size='10' data-pagination-pre-text="下一页" data-pagination-next-text="上一页"
+            data-search="true" data-search-on-enter-key="true">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>校验代码</th>
-                    <th>规则描述</th>
-                    <th>规则级别</th>
-                    <th>表名</th>
-                    <th>表名中文</th>
-                    <th>规则分组</th>
-                    <th>校验结果</th>
-                    <th>起始日期</th>
-                    <th>结束时间</th>
-                    <th>机构代码</th>
-                    <th>处理进度</th>
-                    <th>处理备注</th>
-                    <th>处理人</th>
+                    <th data-field='校验代码'>校验代码</th>
+                    <th data-field='规则描述'>规则描述</th>
+                    <th data-field='规则级别'>规则级别</th>
+                    <th data-field='表名'>表名</th>
+                    <th data-field='表名中文'>表名中文</th>
+                    <th data-field='规则分组'>规则分组</th>
+                    <th data-field='校验结果'>校验结果</th>
+                    <th data-field='起始日期'>起始日期</th>
+                    <th data-field='结束时间'>结束时间</th>
+                    <th data-field='机构代码'>机构代码</th>
+                    <th data-field='处理进度'>处理进度</th>
+                    <th data-field='处理备注'>处理备注</th>
+                    <th data-field='处理人'>处理人</th>
                 </tr>
             </thead>
             <tbody>
                 {% for result in results %}
-                <tr class="{% if result.dealstatus=='已完成' %} success {% else %} danger {% endif %}">
+                <tr class="{% if result.dealstatus=='已完成' %} deal {% else %} nodeal {% endif %}">
                     <td>{{result.id}}</td>
-                    <td><a
-                            href="{{url_for('task.edit_checkresult',check_id=result.id )}}">{{result.checkcode}}</a>
+                    <td><a href="{{url_for('task.edit_checkresult',check_id=result.id )}}">{{result.checkcode}}</a>
                     </td>
                     <td>{{result.checkitemname}}</td>
                     <td>{{result.checklevel}}</td>
@@ -103,23 +83,12 @@
                 {% endfor %}
             </tbody>
         </table>
-        {% endif %}
     </div>
-    {% if results %}
-    <div class="page-footer" style="text-align: center;">
-        {{render_pagination(pagination,align=right,prev='上一页',next='下一页')}}</div>
     {% endif %}
 </div>
-<script type="text/javascript">
-    $('#datestart,#dateend').datepicker({
-        format: 'yyyy-mm-dd',
-        language: 'zh-CN',
-        clearBtn: true,
-        endDate: "0d",
-        title: "任务时间",
-        todayHighlight: true,
-        keyboardNavigation: false,
-        autoclose: true
-    });
-</script>
 {% endblock %}
+{% block scripts %}
+{{super()}}
+<script src="../static/js/popper.min.js"></script>
+<script src="../static/js/bootstrap-table.min.js"></script>
+{% endblock%}   

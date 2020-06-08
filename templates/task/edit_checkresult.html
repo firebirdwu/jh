@@ -21,7 +21,7 @@
     <form class='form-horizontal' method="POST" action="{{url_for('task.edit_checkresult',check_id=check_id)}}">
         {{ edtform.csrf_token }}
         <div>
-            <dl class=" dl-horizontal">
+            <dl class="dl-horizontal">
                 <dt>校验代码:</dt>
                 <dd>{{ result.checkcode}}</dd>
                 <dt>规则描述</dt>
