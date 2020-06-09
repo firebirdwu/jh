@@ -75,4 +75,29 @@ class BankCode(db.Model):
     bankcode=db.Column(db.String(50))
     bankname=db.Column(db.String(200))
     bankaddress=db.Column(db.String(1000))
+
+class Speakers(db.Model):
+    __tablename__ = "Speakers"
+    id = db.Column(db.Integer,primary_key=True)
+    brand = db.Column(db.String(50))
+    area = db.Column(db.String(50))
+    code = db.Column(db.String(50))
+    flag_1 = db.Column(db.String(50))
+    username = db.Column(db.String(50))
+    speaker_name = db.Column(db.String(50))
+    speaker_level = db.Column(db.String(50))
+    city = db.Column(db.String(50))
+    zip_code = db.Column(db.String(50))
+    hospital_name = db.Column(db.String(50))
+    section_office = db.Column(db.String(50))
+    speaker_name2 = db.Column(db.String(50))
+    flag_2 = db.Column(db.String(50))
+    mobile_phone = db.Column(db.String(50))
+    identify_number = db.Column(db.String(50))
+    bank_information = db.Column(db.String(50))
+    bank_city = db.Column(db.String(50))
+    account_code = db.Column(db.String(50))
+    address = db.Column(db.String(500))
+    bank_code = db.Column(db.String(50))
+
     
