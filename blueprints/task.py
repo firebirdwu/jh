@@ -344,10 +344,13 @@ def new_speaker():
         return redirect(url_for('task.speaker_list'))
     return render_template('task/new_speaker.html', form=new_form)
 
-@task_bp.route('/get_bank/<bankcode>', methods=['POST', 'GET'])
-def get_bankname(bankcode):
-    bankname=BankCode.query.filter_by(bankcode=bankcode).first().bankname
-    if bankname:
-        data={'bankname':bankname}
-        return json.dumps(data)
+@task_bp.route('/get_bankname/', methods=['POST', 'GET'])
+def get_bankname():
+    bankcode=request.args['bankcode']
+    try:
+        bankname=BankCode.query.filter_by(bankcode=bankcode).first().bankname
+    except:
+        bankname='未发现匹配银行信息'   
+    data={'bankname':bankname}
+    return json.dumps(data)
         

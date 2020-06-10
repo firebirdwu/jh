@@ -10,14 +10,36 @@
 {{ super() }}
 <script src="{{url_for('static',filename='bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{url_for('static',filename='bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js')}}"></script>
-
+<script>
+    $(document).ready(function(){
+        $('#bank_code').blur(function(){
+            var bank_code=$(this).val();
+                if(bank_code){
+                    console.log(bank_code);
+                    $.ajax({
+                        url:"{{url_for('task.get_bankname')}}",
+                        dataType:"json",
+                        async:true,
+                        type:'GET',
+                        data:{'bankcode':bank_code},
+                        success:function(data){
+                           var bankname=data['bankname'];
+                           console.log(bankname);
+                           $('#bank_information').val(bankname);
+                        },
+                    });
+                };
+        });
+        
+    });
+</script>
 {% endblock %}
 {% block content %}
 <div class=" col-md-8 col-md-offset-2">
     <div class="page-header" style="border-bottom-color:#999;text-align: center;">
         <h1>新讲者</h1>
     </div>
-    <form class='form-horizontal' method="POST" action="{{url_for('task.new_speaker')}}">
+<form class='form-horizontal' onkeydown="if(event.keyCode==13){return false;}" method="POST" action="{{url_for('task.new_speaker')}}">
         {{ form.csrf_token }}
         
         <div class='form-group'>
