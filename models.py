@@ -101,3 +101,9 @@ class Speakers(db.Model):
     bank_code = db.Column(db.String(50))
 
     
+class Yonghong(db.Model):
+    __tablename__='yonghong'
+    id=db.Column(db.Integer,primary_key=True)
+    report_name=db.Column(db.String(50))
+    dev_status=db.Column(db.String(20))
+    dev_name=db.Column(db.String(50))

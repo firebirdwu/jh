@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/form.html' import render_form  %}
+{% block title %}修改条目{% endblock %}
+{% block style %}
+{{ super() }}
+<link rel='stylesheet' href="{{ url_for('static',filename='bootstrap-datepicker/css/bootstrap-datepicker3.min.css')}}"
+    type="text/css">
+{% endblock %}
+{% block headscript %}
+{{ super() }}
+<script src="{{url_for('static',filename='bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
+<script src="{{url_for('static',filename='bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js')}}"></script>
+
+{% endblock %}
+{% block content %}
+<div class=" col-md-8 col-md-offset-2">
+    <div class="page-header" style="border-bottom-color:#999;text-align: center;">
+        <h1>修改报表开发进度</h1>
+    </div>
+    <form class='form-horizontal' method="POST" action="{{url_for('jh.edit_yonghong',yonghong_id=yonghong_id)}}">
+        {{ form.csrf_token }}
+        
+        <div class="form-group">
+            <label class="col-sm-2 control-label">报表名称:</label>
+            <label class="col-sm-5 control-label" style="text-align: left;">{{ report.report_name}}</label>
+        </div>
+        <div class=" form-group">
+            {{form.dev_name.label(class_='col-sm-2 control-label')}}
+            <div class="col-sm-3">
+                {{form.dev_name(class_='form-control',placeholder='请输入名称')}}
+            </div>
+        </div>
+        <div class=" form-group">
+            {{form.dev_status.label(class_='col-sm-2 control-label')}}
+            <div class="col-sm-3">
+                {{form.dev_status(class_='form-control')}}
+            </div>
+        </div>
+        <div class="col-sm-2 col-sm-offset-2">
+            {{ form.submit(class_="btn btn-primary")}}
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $('#taskdate').datepicker({
+        format: 'yyyy-mm-dd',
+        language: 'zh-CN',
+        clearBtn: true,
+        endDate: "0d",
+        title: "任务时间",
+        todayHighlight: true,
+        keyboardNavigation: false,
+        autoclose: true
+    });
+</script>
+{% endblock %}

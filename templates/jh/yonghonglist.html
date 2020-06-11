@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% from 'bootstrap/pagination.html' import render_pagination %}
+{% block title %}永洪报表开发{% endblock %}
+{% block style %}
+{{ super() }}
+<link rel='stylesheet' href="{{ url_for('static',filename='bootstrap-datepicker/css/bootstrap-datepicker3.min.css')}}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/bootstrap-table.min.css')}}">
+<link href="https://unpkg.com/jquery-resizable-columns@0.2.3/dist/jquery.resizableColumns.css" rel="stylesheet">
+<style>
+    .a_top {
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+    .a_bottom {
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+</style>
+{% endblock %}
+{% block headscript %}
+{{ super() }}
+<script src="{{url_for('static',filename='bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
+<script src="{{url_for('static',filename='bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js')}}"></script>
+{% endblock%}
+
+{% block content %}
+<div class=" container">
+    
+    <div class="row">
+        <table id='table'
+            data-toggle="table" 
+            data-height="480" 
+            data-show-columns="true" 
+            data-pagination="true"
+            data-search="true" 
+            data-page-size='15'
+            data-locale="zh-CN"
+            data-pagination-pre-text="下一页" 
+            data-pagination-next-text="上一页"
+            data-search="true" 
+            data-search-on-enter-kevby="true"
+            data-show-export='true'
+            data-resizable="true"
+            data-show-fullscreen="true" 
+            data-virtual-scroll='true'
+            >
+            <thead class="thead-dark" style="background-color: black; color: white;">
+                <tr>
+                    <th>#</th>
+                    <th data-field='操作'>操作</th>
+                    <th data-field='开发人'>开发人</th>
+                    <th data-field='报表名称'>报表名称</th>
+                    <th data-field='开发进度' data-sortable='true'>开发进度</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reports %}
+                <tr>
+                    <td>{{r.id}}</td>
+                    <td>
+                        <div class="input-group-btn">
+                            <button type="button" style="border-radius: 20px;"
+                                class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">操作 <span class="caret"></span></button>
+                            <ul class="dropdown-menu" style="padding: 0px; border-radius: 20px;">
+                                <li><a class="a_top" target="_blank" style="padding-bottom: 3px; text-align: center;"
+                                        href="{{url_for('jh.edit_yonghong',yonghong_id=r.id)}}">修改状态</a>
+                                    </li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td>{{r.dev_name}}</td>
+                    <td>{{r.report_name}}</td>
+                    <td>{{r.dev_status}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('static',filename='js/tableExport.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/popper.min.js')}}"></script>
+<script src="https://unpkg.com/jquery-resizable-columns@0.2.3/dist/jquery.resizableColumns.min.js"></script>
+<script src="{{url_for('static',filename='js/bootstrap-table.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/bootstrap-table-locale-all.min.js')}}"></script>
+<script src="{{url_for('static',filename='js/bootstrap-table-export.min.js')}}"></script>
+<script src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/resizable/bootstrap-table-resizable.min.js"></script>
+{% endblock%}

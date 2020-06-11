@@ -4,6 +4,7 @@ from jh.settings import config
 from jh.blueprints.admin import admin_bp
 from jh.blueprints.auth import auth_bp
 from jh.blueprints.task import task_bp
+from jh.blueprints.jh import jh_bp
 from jh.extensions import mail, db, bootstrap, moment, ckeditor,csrf,login_manager,excel
 from flask import render_template
 from jh.DBUtils import DbUtil
@@ -45,6 +46,7 @@ def register_blueprints(app):
     app.register_blueprint(task_bp,url_prefix='/task')
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(admin_bp, url_prefix='/admin')
+    app.register_blueprint(jh_bp, url_prefix='/jh')
     @app.route('/')
     def index():
         return render_template('index.html')

@@ -78,6 +78,7 @@ class BankcodeSearchForm(FlaskForm):
     searchText=StringField("查询条件:",validators=[DataRequired()])
     submit = SubmitField('确定')
 
+
 class SpeakerForm(FlaskForm):
     brand =StringField("品牌:")
     area = StringField("大区信息:")
@@ -100,3 +101,9 @@ class SpeakerForm(FlaskForm):
     address = StringField("地址:")
     bank_code = StringField("bankcode:")
     submit = SubmitField('确认')
+
+class YonghongForm(FlaskForm):
+    dev_name = StringField('开发人:')
+    dev_status=SelectField('开发进度:', coerce=str, default='未完成',choices=[('未完成','未完成'),('已完成','已完成')])
+    submit = SubmitField('确定')
+
