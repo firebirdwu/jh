@@ -11,26 +11,69 @@
 <script src="{{url_for('static',filename='bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{url_for('static',filename='bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js')}}"></script>
 <script>
-    $(document).ready(function(){
-        $('#bank_code').blur(function(){
-            var bank_code=$(this).val();
-                if(bank_code){
-                    console.log(bank_code);
-                    $.ajax({
-                        url:"{{url_for('task.get_bankname')}}",
-                        dataType:"json",
-                        async:true,
-                        type:'GET',
-                        data:{'bankcode':bank_code},
-                        success:function(data){
-                           var bankname=data['bankname'];
-                           console.log(bankname);
-                           $('#bank_information').val(bankname);
-                        },
-                    });
-                };
+    $(document).ready(function () {
+        $('#bank_code').blur(function () {
+            var bank_code = $(this).val();
+            if (bank_code) {
+                console.log(bank_code);
+                $.ajax({
+                    url: "{{url_for('task.get_bankname')}}",
+                    dataType: "json",
+                    async: true,
+                    type: 'GET',
+                    data: { 'bankcode': bank_code },
+                    success: function (data) {
+                        var bankname = data['bankname'];
+                        console.log(bankname);
+                        $('#bank_information').val(bankname);
+                    },
+                });
+            };
         });
-        
+
+        $('#code').blur(function () {
+            var code = $(this).val();
+            if (code) {
+                console.log(code);
+                $.ajax({
+                    url: "{{url_for('task.get_speakerinfo')}}",
+                    dataType: "json",
+                    async: true,
+                    type: 'GET',
+                    data: { 'code': code },
+                    success: function (data) {
+                        var speaker_name = data['speaker_name'];
+                        if (speaker_name != 'None') {
+
+                            $('input').not('#submit').each(function () {
+                                var id = $(this).attr('id');
+                                console.log('===' + id);
+                                $(this).val(data[id]);
+                            });
+                            var id_type_name = data['id_type'];
+                            var id_type = 4
+                            if (id_type_name == '身份证') {
+                                id_type = 0;
+                            } else if (id_type_name == '护照') {
+                                id_type = 1;
+                            } else {
+                                id_type = 2;
+                            };
+                            $("input[name='id_type']:eq(" + id_type + ")").attr('checked', true);
+                            $('#d_code').toggleClass('has-success has-feedback').toggleClass('has-error has-feedback');
+                            $('#s_code').toggleClass('glyphicon-remove').toggleClass('glyphicon-ok');
+                        } else {
+                            $('input').not('#submit').each(function () {
+                                $('#d_code').toggleClass('has-success has-feedback').toggleClass('has-error has-feedback');
+                                $('#s_code').toggleClass('glyphicon-remove').toggleClass('glyphicon-ok');
+                                $(this).val('');
+                            });
+                        }
+                    }
+                });
+            };
+        });
+
     });
 </script>
 {% endblock %}
@@ -39,121 +82,156 @@
     <div class="page-header" style="border-bottom-color:#999;text-align: center;">
         <h1>新讲者</h1>
     </div>
-<form class='form-horizontal' onkeydown="if(event.keyCode==13){return false;}" method="POST" action="{{url_for('task.new_speaker')}}">
+    <form class='form-horizontal' onkeydown="if(event.keyCode==13){return false;}" method="POST"
+        action="{{url_for('task.new_speaker')}}">
         {{ form.csrf_token }}
-        
+        <div id='d_code' class='form-group has-error has-feedback'>
+            {{ form.code.label(class_='control-label col-sm-3') }}
+            <div class="col-sm-5">
+                {{ form.code(class_='form-control') }}
+                <span id='s_code' class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+            </div>
+        </div>
         <div class='form-group'>
             {{ form.brand.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.brand(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.area.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.area(class_='form-control') }}
             </div>
         </div>
-        <div class='form-group'>
-            {{ form.code.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
-                {{ form.code(class_='form-control') }}
-            </div>
-        </div>
+
         <div class='form-group'>
             {{ form.username.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.username(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.speaker_name.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.speaker_name(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.speaker_level.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.speaker_level(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.city.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.city(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.zip_code.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.zip_code(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.hospital_name.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.hospital_name(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.section_office.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.section_office(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.speaker_name2.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.speaker_name2(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.mobile_phone.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.mobile_phone(class_='form-control') }}
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form.id_type.label(class_='control-label col-sm-3') }}
+            <div class="col-sm-5">
+                {{ form.id_type(class_='list-inline',dislay='inline-block') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.identify_number.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
-                {{ form.identify_number(class_='form-control') }}
+            <div>
+                <div class='col-sm-5'>
+                    {{ form.identify_number(class_='form-control') }}
+                </div>
             </div>
         </div>
+
         <div class='form-group'>
             {{ form.bank_information.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.bank_information(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.bank_city.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.bank_city(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.account_code.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.account_code(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.address.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.address(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
             {{ form.bank_code.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
+            <div class="col-sm-5">
                 {{ form.bank_code(class_='form-control') }}
             </div>
         </div>
+        <div class='form-group'>
+            {{ form.deal_date.label(class_='control-label col-sm-3') }}
+            <div id='deal_date' class="col-sm-5 input-group date">
+                {{ form.deal_date(class_='form-control') }}
+                <span class="input-group-addon glyphicon glyphicon-th"></span>
+            </div>
+        </div>
+        <div class='form-group'>
+            {{ form.remark.label(class_='control-label col-sm-3') }}
+            <div class="col-sm-5">
+                {{ form.remark(class_='form-control') }}
+            </div>
+        </div>
         <div class="col-sm-2 col-sm-offset-5">
-            {{ form.submit(class_="btn btn-lg btn-primary")}}
+            {{ form.submit(class_="btn btn-primary")}}
         </div>
     </form>
 </div>
-
+<script type="text/javascript">
+    $('#deal_date').datepicker({
+        format: 'yyyy-mm-dd',
+        language: 'zh-CN',
+        clearBtn: true,
+        endDate: "0d",
+        title: "处理日期",
+        todayHighlight: true,
+        keyboardNavigation: false,
+        autoclose: true
+    });
+</script>
 {% endblock %}

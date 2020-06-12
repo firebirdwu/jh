@@ -100,10 +100,18 @@ class SpeakerForm(FlaskForm):
     account_code = StringField("开户账号:")
     address = StringField("地址:")
     bank_code = StringField("bankcode:")
-    submit = SubmitField('确认')
+    deal_date = StringField('处理日期:')
+    remark = TextAreaField('备注:')
+    id_type = RadioField('证件类型:',coerce=str,choices=[('身份证','身份证'),('护照','护照'),('其他','其他')],default=1)
+    submit = SubmitField('确定')
 
 class YonghongForm(FlaskForm):
     dev_name = StringField('开发人:')
     dev_status=SelectField('开发进度:', coerce=str, default='未完成',choices=[('未完成','未完成'),('已完成','已完成')])
     submit = SubmitField('确定')
 
+class SearchSpeakerForm(FlaskForm):
+    dateStart=StringField("开始日期:")
+    dateEnd=StringField("结束日期:")
+    searchvalue = StringField("检索信息")
+    submit = SubmitField('确定')

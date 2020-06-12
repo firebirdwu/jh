@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, render_template, redirect, url_for, request, current_app
-from jh.forms import TaskForm, SearchForm, TodoForm, CheckResultForm, ImportChecklist, BankcodeSearchForm, SpeakerForm
+from jh.forms import TaskForm, SearchForm, TodoForm, CheckResultForm, ImportChecklist, BankcodeSearchForm, SpeakerForm,SearchSpeakerForm
 from flask_login import login_required, current_user
 from jh.models import Tasks, Todo, CheckResult, TaskGroup, TaskType, Users, BankCode,Speakers
 from jh.extensions import db, excel
@@ -252,9 +252,24 @@ def bankcode_list():
 @task_bp.route('/speaker_list', methods=['POST', 'GET'])
 @login_required
 def speaker_list():
-    results = Speakers.query.order_by(Speakers.id.desc())
-    #results = paginate.items
-    return render_template('task/speaker_list.html', speakers=results)
+    searchForm = SearchSpeakerForm()
+    if searchForm.validate_on_submit():
+        dateStart = searchForm.dateStart.data
+        dateEnd = searchForm.dateEnd.data
+        searchValue = searchForm.searchvalue.data
+        if dateStart == '' and dateEnd !='' or dateStart !='' and dateEnd =='':
+            flash('开始时间或结束时间要同时有值','error')
+            return ''
+        if dateStart != '' and searchValue == '':
+            results = Speakers.query.filter(and_(Speakers.deal_date>=dateStart,Speakers.deal_date < dateEnd))
+        elif dateStart != '' and searchValue != '':
+             results = Speakers.query.filter(and_(Speakers.deal_date>=dateStart,Speakers.deal_date < dateEnd)).\
+                 filter(or_(Speakers.code.like('%'+searchValue+'%'),Speakers.speaker_name.like('%'+searchValue+'%')))
+        else:
+            results=Speakers.query.filter(or_(Speakers.code.like('%'+searchValue+'%'),Speakers.speaker_name.like('%'+searchValue+'%')))
+        
+        return render_template('task/speaker_list.html', speakers=results,searchform=searchForm)
+    return render_template('task/speaker_list.html', speakers=None,searchform=searchForm)
 
 @task_bp.route('/edit_seaker/<int:speaker_id>', methods=['POST', 'GET'])
 @login_required
@@ -352,5 +367,16 @@ def get_bankname():
     except:
         bankname='未发现匹配银行信息'   
     data={'bankname':bankname}
+    return json.dumps(data)
+
+@task_bp.route('/get_speakerinfo/', methods=['POST', 'GET'])
+def get_speakerinfo():
+    code=request.args['code']
+    try:
+        speaker=Speakers.query.filter_by(code=code).first()
+        data = speaker.to_json()
+    except:
+        data={'speaker_name':'None'}
+    print(json.dumps(data))
     return json.dumps(data)
         

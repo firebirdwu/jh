@@ -15,11 +15,16 @@
 {% block content %}
 <div class=" col-md-8 col-md-offset-2">
     <div class="page-header" style="border-bottom-color:#999;text-align: center;">
-        <h1>修改讲者</h1>
+        <h1>修改讲者:{{form.speaker_name.data}}【{{form.code.data}}】</h1>
     </div>
     <form class='form-horizontal' method="POST" action="{{url_for('task.edit_speaker',speaker_id=speaker_id)}}">
         {{ form.csrf_token }}
-        
+        <div class='form-group'>
+            {{ form.code.label(class_='control-label col-sm-3') }}
+            <div class="col-sm-5 input-group">
+                {{ form.code(class_='form-control') }}
+            </div>
+        </div>
         <div class='form-group'>
             {{ form.brand.label(class_='control-label col-sm-3') }}
             <div class="col-sm-5 input-group">
@@ -32,12 +37,7 @@
                 {{ form.area(class_='form-control') }}
             </div>
         </div>
-        <div class='form-group'>
-            {{ form.code.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
-                {{ form.code(class_='form-control') }}
-            </div>
-        </div>
+        
         <div class='form-group'>
             {{ form.username.label(class_='control-label col-sm-3') }}
             <div class="col-sm-5 input-group">
@@ -94,6 +94,9 @@
         </div>
         <div class='form-group'>
             {{ form.identify_number.label(class_='control-label col-sm-3') }}
+            <div class="col-sm-2 input-group">
+                {{ form.id_type(class_='form-control') }}
+            </div>
             <div class="col-sm-5 input-group">
                 {{ form.identify_number(class_='form-control') }}
             </div>
@@ -128,9 +131,38 @@
                 {{ form.bank_code(class_='form-control') }}
             </div>
         </div>
+        <div class='form-group'>
+            {{ form.deal_date.label(class_='control-label col-sm-3') }}
+            <div class="col-sm-5 input-group date">
+                {{ form.deal_date(class_='form-control') }}
+                <span class=" input-group-addon glyphicon glyphicon-th"></span>
+            </div>
+        </div>
+        <div class='form-group'>
+            {{ form.remark.label(class_='control-label col-sm-3') }}
+            <div class="col-sm-5 input-group">
+                {{ form.remark(class_='form-control') }}
+            </div>
+        </div>
         <div class="col-sm-2 col-sm-offset-5">
             {{ form.submit(class_="btn btn-lg btn-primary")}}
         </div>
     </form>
 </div>
+<script type="text/javascript">
+    $('#deal_date').datepicker({
+        format: 'yyyy-mm-dd',
+        language: 'zh-CN',
+        clearBtn: true,
+        endDate: "0d",
+        title: "处理日期",
+        todayHighlight: true,
+        keyboardNavigation: false,
+        autoclose: true
+    });
+</script>
 {% endblock %}
+{% block scripts %}
+{{super()}}
+<script src="{{url_for('static',filename='js/popper.min.js')}}"></script>
+{% endblock%}
