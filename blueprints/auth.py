@@ -13,7 +13,7 @@ auth_bp = Blueprint('auth', __name__)
 def login():
     if current_user.is_authenticated:
         #return redirect(url_for('task.index'))
-        return redirect(url_for('task.new_task'))
+        return redirect(url_for('index'))
 
     form = LoginForm()
     if form.validate_on_submit():

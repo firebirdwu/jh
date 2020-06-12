@@ -99,6 +99,9 @@ class Speakers(db.Model):
     account_code = db.Column(db.String(50))
     address = db.Column(db.String(500))
     bank_code = db.Column(db.String(50))
+    deal_date  = db.Column(db.String(20))
+    remark = db.Column(db.String(1000))
+    id_type=db.Column(db.String(10))
 
     
 class Yonghong(db.Model):
