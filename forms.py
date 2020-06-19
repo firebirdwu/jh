@@ -73,7 +73,12 @@ class ImportChecklist(FlaskForm):
     
     filechecklist=StringField("file",validators=[DataRequired()])
     submit = SubmitField('确认')
-        
+
+class ImportForm(FlaskForm):
+    
+    filespeakerlist=StringField("file",validators=[DataRequired()])
+    submit = SubmitField('确认')
+
 class BankcodeSearchForm(FlaskForm):
     searchText=StringField("查询条件:",validators=[DataRequired()])
     submit = SubmitField('确定')

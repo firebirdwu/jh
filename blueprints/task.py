@@ -1,11 +1,11 @@
 from flask import Blueprint, flash, render_template, redirect, url_for, request, current_app
-from jh.forms import TaskForm, SearchForm, TodoForm, CheckResultForm, ImportChecklist, BankcodeSearchForm, SpeakerForm,SearchSpeakerForm
+from jh.forms import TaskForm, SearchForm, TodoForm, CheckResultForm, ImportChecklist, BankcodeSearchForm, SpeakerForm, SearchSpeakerForm,ImportForm
 from flask_login import login_required, current_user
-from jh.models import Tasks, Todo, CheckResult, TaskGroup, TaskType, Users, BankCode,Speakers
+from jh.models import Tasks, Todo, CheckResult, TaskGroup, TaskType, Users, BankCode, Speakers
 from jh.extensions import db, excel
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, func
 import json
-
+from jh.utils import check_identify
 
 task_bp = Blueprint('task', __name__)
 
@@ -31,6 +31,7 @@ def task_list():
         # tasks= paginate.items
         tasks = Tasks.query.filter(and_(Tasks.taskDate >= startdate, Tasks.taskDate <= enddate, Tasks.username == username)).\
             order_by(Tasks.taskInputTime.desc())
+
         return render_template('task/tasklist.html', tasks=tasks, searchform=searchForm)
     else:
         username = Users.query.filter_by(id=current_user.id).first().username
@@ -39,7 +40,13 @@ def task_list():
         # paginate = Tasks.query.filter_by(username=username).order_by(Tasks.taskInputTime.desc()).paginate(page, per_page=per_page)
         # tasks= paginate.items
         tasks = Tasks.query.filter_by(username=username).order_by(
-            Tasks.taskInputTime.desc())
+            Tasks.taskInputTime.desc()).all()
+        #tasks = Tasks.query.with_entities(Tasks.username,func.count(Tasks.id)).group_by(Tasks.username).having(func.count(Tasks.id)>1).all()
+        # print('==============')
+        # print(tasks)
+        # if len(tasks)>0:
+        #     for task in tasks:
+        #         print(task[0])
         return render_template('task/tasklist.html', tasks=tasks, searchform=searchForm)
 
 
@@ -88,6 +95,7 @@ def edit_task(task_id):
     #edit_form.username.data = task.username
 
     return render_template('task/edit_task.html', form=edit_form, task_id=task_id)
+
 
 @task_bp.route('/todolist', methods=['POST', 'GET'])
 @login_required
@@ -186,10 +194,15 @@ def checkresult_list():
     return render_template('task/checkresult_list.html', results=results)
 
 
-@task_bp.route('/handson_view', methods=['GET'])
+@task_bp.route('/handson_view_handson', methods=['GET'])
 @login_required
 def handson_table():
     return excel.make_response_from_tables(db.session, [CheckResult], 'handsontable.html')
+
+@task_bp.route('/speakers_view_handson', methods=['GET'])
+@login_required
+def speakers_view_handson():
+    return excel.make_response_from_tables(db.session, [Speakers], 'handsontable.html')
 
 
 @task_bp.route('/export_table', methods=['GET'])
@@ -257,26 +270,31 @@ def speaker_list():
         dateStart = searchForm.dateStart.data
         dateEnd = searchForm.dateEnd.data
         searchValue = searchForm.searchvalue.data
-        if dateStart == '' and dateEnd !='' or dateStart !='' and dateEnd =='':
-            flash('开始时间或结束时间要同时有值','error')
+        if dateStart == '' and dateEnd != '' or dateStart != '' and dateEnd == '':
+            flash('开始时间或结束时间要同时有值', 'error')
             return ''
         if dateStart != '' and searchValue == '':
-            results = Speakers.query.filter(and_(Speakers.deal_date>=dateStart,Speakers.deal_date < dateEnd))
+            results = Speakers.query.filter(
+                and_(Speakers.deal_date >= dateStart, Speakers.deal_date <= dateEnd))
         elif dateStart != '' and searchValue != '':
-             results = Speakers.query.filter(and_(Speakers.deal_date>=dateStart,Speakers.deal_date < dateEnd)).\
-                 filter(or_(Speakers.code.like('%'+searchValue+'%'),Speakers.speaker_name.like('%'+searchValue+'%')))
+            results = Speakers.query.filter(and_(Speakers.deal_date >= dateStart, Speakers.deal_date <= dateEnd)).\
+                filter(or_(Speakers.code.like('%'+searchValue+'%'),
+                           Speakers.speaker_name.like('%'+searchValue+'%')))
         else:
-            results=Speakers.query.filter(or_(Speakers.code.like('%'+searchValue+'%'),Speakers.speaker_name.like('%'+searchValue+'%')))
-        
-        return render_template('task/speaker_list.html', speakers=results,searchform=searchForm)
-    return render_template('task/speaker_list.html', speakers=None,searchform=searchForm)
+            results = Speakers.query.filter(or_(Speakers.code.like(
+                '%'+searchValue+'%'), Speakers.speaker_name.like('%'+searchValue+'%')))
 
-@task_bp.route('/edit_seaker/<int:speaker_id>', methods=['POST', 'GET'])
+        return render_template('task/speaker_list.html', speakers=results, searchform=searchForm)
+    return render_template('task/speaker_list.html', speakers=None, searchform=searchForm)
+
+
+@task_bp.route('/edit_speaker/<int:speaker_id>', methods=['POST', 'GET'])
 @login_required
 def edit_speaker(speaker_id):
     speaker = Speakers.query.get(speaker_id)
     edit_form = SpeakerForm()
     if edit_form.validate_on_submit():
+        
         speaker.brand = edit_form.brand.data
         speaker.area = edit_form.area.data
         speaker.code = edit_form.code.data
@@ -297,29 +315,45 @@ def edit_speaker(speaker_id):
         speaker.account_code = edit_form.account_code.data
         speaker.address = edit_form.address.data
         speaker.bank_code = edit_form.bank_code.data
-        db.session.commit()
-        flash('修改成功 ', 'success')
-        return redirect(url_for('task.speaker_list'))
-    edit_form.brand.data=speaker.brand 
-    edit_form.area.data=speaker.area 
-    edit_form.code.data=speaker.code 
-    edit_form.flag_1.data=speaker.flag_1 
-    edit_form.username.data=speaker.username 
-    edit_form.speaker_name.data=speaker.speaker_name 
-    edit_form.speaker_level.data=speaker.speaker_level 
-    edit_form.city.data=speaker.city 
-    edit_form.zip_code.data=speaker.zip_code 
-    edit_form.hospital_name.data=speaker.hospital_name 
-    edit_form.section_office.data=speaker.section_office 
-    edit_form.speaker_name2.data=speaker.speaker_name2 
-    edit_form.flag_2.data=speaker.flag_2 
-    edit_form.mobile_phone.data=speaker.mobile_phone 
-    edit_form.identify_number.data=speaker.identify_number 
-    edit_form.bank_information.data=speaker.bank_information 
-    edit_form.bank_city.data=speaker.bank_city 
-    edit_form.account_code.data=speaker.account_code 
-    edit_form.address.data=speaker.address 
-    edit_form.bank_code.data=speaker.bank_code
+        speaker.deal_date = edit_form.deal_date.data
+        speaker.remark = edit_form.remark.data
+        speaker.id_type = edit_form.id_type.data
+        id_check,msg=True,''
+        if len(edit_form.identify_number.data)==18:
+            id_check,msg=check_identify(edit_form.identify_number.data)
+        if not id_check:
+            flash(msg,'danger')
+            return render_template('task/edit_speaker.html', form=edit_form, speaker_id=speaker_id)
+        if(edit_form.id_type.data == '身份证' and len(edit_form.identify_number.data) != 18) or (edit_form.id_type.data == '护照' and len(edit_form.identify_number.data) != 7):
+            flash("讲者身份ID长度不够", "danger")
+            return render_template('task/edit_speaker.html', form=edit_form, speaker_id=speaker_id)
+        else:
+            db.session.commit()
+            flash('修改成功 ', 'success')
+            return redirect(url_for('task.speaker_list'))
+    edit_form.brand.data = speaker.brand
+    edit_form.area.data = speaker.area
+    edit_form.code.data = speaker.code
+    edit_form.flag_1.data = speaker.flag_1
+    edit_form.username.data = speaker.username
+    edit_form.speaker_name.data = speaker.speaker_name
+    edit_form.speaker_level.data = speaker.speaker_level
+    edit_form.city.data = speaker.city
+    edit_form.zip_code.data = speaker.zip_code
+    edit_form.hospital_name.data = speaker.hospital_name
+    edit_form.section_office.data = speaker.section_office
+    edit_form.speaker_name2.data = speaker.speaker_name2
+    edit_form.flag_2.data = speaker.flag_2
+    edit_form.mobile_phone.data = speaker.mobile_phone
+    edit_form.identify_number.data = speaker.identify_number
+    edit_form.bank_information.data = speaker.bank_information
+    edit_form.bank_city.data = speaker.bank_city
+    edit_form.account_code.data = speaker.account_code
+    edit_form.address.data = speaker.address
+    edit_form.bank_code.data = speaker.bank_code
+    edit_form.deal_date.data = speaker.deal_date
+    edit_form.remark.data = speaker.remark
+    edit_form.id_type.data = speaker.id_type
     return render_template('task/edit_speaker.html', form=edit_form, speaker_id=speaker_id)
 
 
@@ -348,35 +382,85 @@ def new_speaker():
         account_code = new_form.account_code.data
         address = new_form.address.data
         bank_code = new_form.bank_code.data
-        speaker = Speakers(brand=brand,area=area,code=code,flag_1=flag_1,username=username,speaker_name=speaker_name,\
-            speaker_level=speaker_level,city=city,zip_code=zip_code,hospital_name=hospital_name,section_office=section_office,\
-                speaker_name2=speaker_name2,flag_2=flag_2,mobile_phone=mobile_phone,identify_number=identify_number,\
-                    bank_information=bank_information,bank_city=bank_city,account_code=account_code,address=address,\
-                        bank_code=bank_code)
-        db.session.add(speaker)
-        db.session.commit()
-        flash('成功+1 ', 'success')
-        return redirect(url_for('task.speaker_list'))
+        deal_date = new_form.deal_date.data
+        remark = new_form.remark.data
+        id_type = new_form.id_type.data
+        if(id_type == '身份证' and len(identify_number) != 18) or (id_type == '护照' and len(identify_number) != 7):
+            flash("讲者身份ID长度不够", "danger")
+            return render_template('task/new_speaker.html', form=new_form)
+        else:
+            speaker = Speakers(brand=brand, area=area, code=code, flag_1=flag_1, username=username, speaker_name=speaker_name,
+                               speaker_level=speaker_level, city=city, zip_code=zip_code, hospital_name=hospital_name, section_office=section_office,
+                               speaker_name2=speaker_name2, flag_2=flag_2, mobile_phone=mobile_phone, identify_number=identify_number,
+                               bank_information=bank_information, bank_city=bank_city, account_code=account_code, address=address,
+                               bank_code=bank_code, deal_date=deal_date, remark=remark, id_type=id_type)
+            db.session.add(speaker)
+            db.session.commit()
+            flash('成功+1 ', 'success')
+            return redirect(url_for('task.speaker_list'))
     return render_template('task/new_speaker.html', form=new_form)
+
 
 @task_bp.route('/get_bankname/', methods=['POST', 'GET'])
 def get_bankname():
-    bankcode=request.args['bankcode']
+    bankcode = request.args['bankcode']
     try:
-        bankname=BankCode.query.filter_by(bankcode=bankcode).first().bankname
+        bankname = BankCode.query.filter_by(bankcode=bankcode).first().bankname
     except:
-        bankname='未发现匹配银行信息'   
-    data={'bankname':bankname}
+        bankname = '未发现匹配银行信息'
+    data = {'bankname': bankname}
     return json.dumps(data)
+
 
 @task_bp.route('/get_speakerinfo/', methods=['POST', 'GET'])
 def get_speakerinfo():
-    code=request.args['code']
+    code = request.args['code']
     try:
-        speaker=Speakers.query.filter_by(code=code).first()
+        speaker = Speakers.query.filter_by(code=code).first()
         data = speaker.to_json()
     except:
-        data={'speaker_name':'None'}
-    print(json.dumps(data))
+        data = {'speaker_name': 'None'}
     return json.dumps(data)
+
+@task_bp.route('/import_speakerlist', methods=['POST', 'GET'])
+@login_required
+def import_speakerlist():
+    importForm = ImportForm()
+
+    if importForm.validate_on_submit():
+        #CheckResult.query.delete()
         
+        def speaker_init_func(row):
+            c1=Speakers()
+            c1.brand =row['brand ']
+            c1.area =row['area ']
+            c1.code =row['code ']
+            c1.flag_1 =row['flag_1 ']
+            c1.username =row['username ']
+            c1.speaker_name =row['speaker_name ']
+            c1.speaker_level =row['speaker_level ']
+            c1.city =row['city ']
+            c1.zip_code =row['zip_code ']
+            c1.hospital_name =row['hospital_name ']
+            c1.section_office =row['section_office ']
+            c1.speaker_name2 =row['speaker_name2 ']
+            c1.flag_2 =row['flag_2 ']
+            c1.mobile_phone =row['mobile_phone ']
+            c1.identify_number =row['identify_number ']
+            c1.bank_information =row['bank_information ']
+            c1.bank_city =row['bank_city ']
+            c1.account_code =row['account_code ']
+            c1.address =row['address ']
+            c1.bank_code =row['bank_code ']
+            c1.deal_date=row['deal_date']
+            c1.remark=row['remark']
+            c1.id_type=row['id_type']
+            return c1
+        request.save_book_to_database(
+            field_name='filespeakerlist',
+            session=db.session,
+            tables=[Speakers],
+            initializers=[speaker_init_func])
+        flash('导入成功','success')
+        return redirect(url_for('task.speaker_list'))
+    return render_template('task/import_speakerlist.html', form=importForm)

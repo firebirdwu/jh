@@ -10,7 +10,95 @@
 {{ super() }}
 <script src="{{url_for('static',filename='bootstrap-datepicker/js/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{url_for('static',filename='bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js')}}"></script>
+<script>
+    $(document).ready(function () {
+        $('#bank_code').blur(function () {
+            var bank_code = $(this).val();
+            if (bank_code) {
+                console.log(bank_code);
+                $.ajax({
+                    url: "{{url_for('task.get_bankname')}}",
+                    dataType: "json",
+                    async: true,
+                    type: 'GET',
+                    data: { 'bankcode': bank_code },
+                    success: function (data) {
+                        var bankname = data['bankname'];
+                        console.log(bankname);
+                        $('#bank_information').val(bankname);
+                    },
+                });
+            };
+        });
 
+        $('#code').blur(function () {
+            var code = $(this).val();
+            if (code) {
+                console.log(code);
+                $.ajax({
+                    url: "{{url_for('task.get_speakerinfo')}}",
+                    dataType: "json",
+                    async: true,
+                    type: 'GET',
+                    data: { 'code': code },
+                    success: function (data) {
+                        var speaker_name = data['speaker_name'];
+                        if (speaker_name != 'None') {
+
+                            $('input').not('#submit').each(function () {
+                                var id = $(this).attr('id');
+                                console.log('===' + id);
+                                $(this).val(data[id]);
+                            });
+                            var id_type_name = data['id_type'];
+                            var id_type = 4
+                            if (id_type_name == '身份证') {
+                                id_type = 0;
+                            } else if (id_type_name == '护照') {
+                                id_type = 1;
+                            } else {
+                                id_type = 2;
+                            };
+                            $("input[name='id_type']:eq(" + id_type + ")").attr('checked', true);
+                            
+                            $('#d_code').addClass('has-success').removeClass('has-error');
+                            $('#s_code').removeClass('glyphicon-remove').addClass('glyphicon-ok');
+                        } else {
+                            $('input').not('#submit').each(function () {
+                                
+                                $(this).val('');
+                            });
+                            $('#d_code').removeClass('has-success').addClass('has-error');
+                            $('#s_code').addClass('glyphicon-remove').removeClass('glyphicon-ok');
+                        }
+                    }
+                });
+            };
+        });
+
+        $("input:radio[name='id_type']").change(function(){
+            var seq_id=$("input:radio[name='id_type']:checked").attr('id');
+            var id_num = $('#identify_number').val();
+            var id_len = 0;
+            if(id_num != ''){
+                id_len = id_num.length;
+            }
+            
+            if(seq_id=='id_type-0'){
+                if(id_num!='' && id_len!=18){
+                    alert('身份证长度不够。');
+                    return false;
+                }
+            }else if(seq_id=='id_type-1'){
+                if(id_num!='' && id_len!=7){
+                    alert('护照长度不够。');
+                }
+            }else{
+                
+            };
+        });
+    });
+</script>
 {% endblock %}
 {% block content %}
 <div class=" col-md-8 col-md-offset-2">
@@ -92,13 +180,30 @@
                 {{ form.mobile_phone(class_='form-control') }}
             </div>
         </div>
+       
         <div class='form-group'>
             {{ form.identify_number.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-2 input-group">
-                {{ form.id_type(class_='form-control') }}
-            </div>
             <div class="col-sm-5 input-group">
                 {{ form.identify_number(class_='form-control') }}
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form.id_type.label(class_='control-label col-sm-3') }}
+            <div class="col-sm-5">
+                {{ form.id_type(class_='list-inline',dislay='inline-block') }}
+            </div>
+        </div>
+        <div class='form-group'>
+            {{ form.account_code.label(class_='control-label col-sm-3') }}
+            <div class="col-sm-5 input-group">
+                {{ form.account_code(class_='form-control') }}
+            </div>
+        </div>
+        
+        <div class='form-group'>
+            {{ form.bank_code.label(class_='control-label col-sm-3') }}
+            <div class="col-sm-5 input-group">
+                {{ form.bank_code(class_='form-control') }}
             </div>
         </div>
         <div class='form-group'>
@@ -113,27 +218,17 @@
                 {{ form.bank_city(class_='form-control') }}
             </div>
         </div>
-        <div class='form-group'>
-            {{ form.account_code.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
-                {{ form.account_code(class_='form-control') }}
-            </div>
-        </div>
+        
         <div class='form-group'>
             {{ form.address.label(class_='control-label col-sm-3') }}
             <div class="col-sm-5 input-group">
                 {{ form.address(class_='form-control') }}
             </div>
         </div>
-        <div class='form-group'>
-            {{ form.bank_code.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group">
-                {{ form.bank_code(class_='form-control') }}
-            </div>
-        </div>
+       
         <div class='form-group'>
             {{ form.deal_date.label(class_='control-label col-sm-3') }}
-            <div class="col-sm-5 input-group date">
+            <div  id='deal_date' class="col-sm-5 input-group date">
                 {{ form.deal_date(class_='form-control') }}
                 <span class=" input-group-addon glyphicon glyphicon-th"></span>
             </div>

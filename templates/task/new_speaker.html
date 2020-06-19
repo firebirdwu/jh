@@ -60,20 +60,38 @@
                                 id_type = 2;
                             };
                             $("input[name='id_type']:eq(" + id_type + ")").attr('checked', true);
-                            $('#d_code').toggleClass('has-success has-feedback').toggleClass('has-error has-feedback');
-                            $('#s_code').toggleClass('glyphicon-remove').toggleClass('glyphicon-ok');
+                            
+                            
                         } else {
-                            $('input').not('#submit').each(function () {
-                                $('#d_code').toggleClass('has-success has-feedback').toggleClass('has-error has-feedback');
-                                $('#s_code').toggleClass('glyphicon-remove').toggleClass('glyphicon-ok');
-                                $(this).val('');
-                            });
+                            
+                            
                         }
                     }
                 });
             };
         });
 
+        $("input:radio[name='id_type']").change(function(){
+            var seq_id=$("input:radio[name='id_type']:checked").attr('id');
+            var id_num = $('#identify_number').val();
+            var id_len = 0;
+            if(id_num != ''){
+                id_len = id_num.length;
+            }
+            
+            if(seq_id=='id_type-0'){
+                if(id_num!='' && id_len!=18){
+                    alert('身份证长度不够。');
+                    return false;
+                }
+            }else if(seq_id=='id_type-1'){
+                if(id_num!='' && id_len!=7){
+                    alert('护照长度不够。');
+                }
+            }else{
+                
+            };
+        });
     });
 </script>
 {% endblock %}
@@ -85,11 +103,10 @@
     <form class='form-horizontal' onkeydown="if(event.keyCode==13){return false;}" method="POST"
         action="{{url_for('task.new_speaker')}}">
         {{ form.csrf_token }}
-        <div id='d_code' class='form-group has-error has-feedback'>
+        <div class='form-group'>
             {{ form.code.label(class_='control-label col-sm-3') }}
             <div class="col-sm-5">
                 {{ form.code(class_='form-control') }}
-                <span id='s_code' class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
             </div>
         </div>
         <div class='form-group'>

@@ -52,10 +52,11 @@
     </div>
     <hr>
     <div class="row">
-        <table id='table' data-toggle="table" data-height="580" data-show-columns="true" data-pagination="true"
+        <table  class="table text-nowrap" id='table' data-toggle="table" data-height="580" data-show-columns="true" data-pagination="true"
             data-search="true" data-page-size='15' data-locale="zh-CN" data-pagination-pre-text="下一页"
             data-pagination-next-text="上一页" data-search-on-enter-kevby="true" data-show-export='true'
-            data-resizable="true" data-show-fullscreen="true" data-virtual-scroll='true'>
+            data-resizable="true" data-show-fullscreen="true" data-virtual-scroll='true'
+            >
             <thead class="thead-dark" style="background-color: black; color: white;">
                 <tr>
                     <th>#</th>
@@ -73,9 +74,8 @@
                     <th data-field='科室'>科室</th>
                     <th data-field='讲者2'>讲者2</th>
                     <th data-field='flag_2'>flag_2</th>
-                    <th data-field='证件类型'>证件类型</th>
+                    <th data-field='手机号'>手机号</th>                    
                     <th data-field='证件号码'>证件号码</th>
-                    <th data-field='手机号'>手机号</th>
                     <th data-field='开户网点信息'>开户网点信息</th>
                     <th data-field='银行所在城市'>银行所在城市</th>
                     <th data-field='开户账号'>开户账号</th>
@@ -83,6 +83,7 @@
                     <th data-field='bankcode'>bankcode</th>
                     <th data-field='处理日期'>处理日期</th>
                     <th data-field='备注'>备注</th>
+                    <th data-field='证件类型'>证件类型</th>
                 </tr>
             </thead>
             <tbody>
@@ -115,17 +116,17 @@
                     <td>{{s.hospital_name}}</td>
                     <td>{{s.section_office}}</td>
                     <td>{{s.speaker_name2}}</td>
-                    <td>{{s.flag_2}}</td>
-                    <td>{{s.id_type}}</td>
-                    <td>{{s.identify_number}}</td>
-                    <td>{{s.mobile_phone}}</td>
+                    <td>{{s.flag_2}}</td>                              
+                    <td data-tableexport-msonumberformat="\@">{{s.mobile_phone}}</td>
+                    <td data-tableexport-msonumberformat="\@">{{s.identify_number}}</td>
                     <td>{{s.bank_information}}</td>
                     <td>{{s.bank_city}}</td>
-                    <td>{{s.account_code}}</td>
+                    <td data-tableexport-msonumberformat="\@">{{s.account_code}}</td>
                     <td>{{s.address}}</td>
-                    <td>{{s.bank_code}}</td>
-                    <td>{{s.deal_date}}</td>
+                    <td data-tableexport-msonumberformat="\@">{{s.bank_code}}</td>
+                    <td data-tableexport-msonumberformat="yyyy-mm-dd">{{s.deal_date}}</td>
                     <td>{{s.remark}}</td>
+                    <td>{{s.id_type}}</td>
                 </tr>
                 {% endfor %}
                 {% endif %}
@@ -144,6 +145,7 @@
         keyboardNavigation: false,
         autoclose: true
     });
+   
 </script>
 {% endblock %}
 {% block scripts %}
