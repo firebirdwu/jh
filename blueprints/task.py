@@ -319,18 +319,18 @@ def edit_speaker(speaker_id):
         speaker.remark = edit_form.remark.data
         speaker.id_type = edit_form.id_type.data
         id_check,msg=True,''
-        if len(edit_form.identify_number.data)==18:
-            id_check,msg=check_identify(edit_form.identify_number.data)
-        if not id_check:
-            flash(msg,'danger')
-            return render_template('task/edit_speaker.html', form=edit_form, speaker_id=speaker_id)
-        if(edit_form.id_type.data == '身份证' and len(edit_form.identify_number.data) != 18) or (edit_form.id_type.data == '护照' and len(edit_form.identify_number.data) != 7):
-            flash("讲者身份ID长度不够", "danger")
-            return render_template('task/edit_speaker.html', form=edit_form, speaker_id=speaker_id)
-        else:
-            db.session.commit()
-            flash('修改成功 ', 'success')
-            return redirect(url_for('task.speaker_list'))
+        # if len(edit_form.identify_number.data)==18:
+        #     id_check,msg=check_identify(edit_form.identify_number.data)
+        # if not id_check:
+        #     flash(msg,'danger')
+        #     return render_template('task/edit_speaker.html', form=edit_form, speaker_id=speaker_id)
+        # if(edit_form.id_type.data == '身份证' and len(edit_form.identify_number.data) != 18) or (edit_form.id_type.data == '护照' and len(edit_form.identify_number.data) != 7):
+        #     flash("讲者身份ID长度不够", "danger")
+        #     return render_template('task/edit_speaker.html', form=edit_form, speaker_id=speaker_id)
+        # else:
+        db.session.commit()
+        flash('修改成功 ', 'success')
+        return redirect(url_for('task.speaker_list'))
     edit_form.brand.data = speaker.brand
     edit_form.area.data = speaker.area
     edit_form.code.data = speaker.code
